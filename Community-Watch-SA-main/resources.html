@@ -1,0 +1,637 @@
+
+       <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Safety SA - Resources</title>
+    <style>
+        /* CSS EMBEDDED DIRECTLY HERE */
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #007bff;
+            --accent-color: #dc3545;
+            --text-color: #333;
+            --light-bg: #f4f7f6;
+            --white-bg: #ffffff;
+            --border-color: #ddd;
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #e6e6e6;
+            border-bottom: 2px solid white;
+        }
+
+        /* Admin link styling - visible for demo, hide in real app */
+        /* .admin-link {
+            display: none;  Uncomment this in a real application 
+        } */
+
+        /* Hero section is not on this page, but shared styles still apply */
+        #hero { /* Example for consistency, won't be visible on this page */
+            background: url('https://via.placeholder.com/1500x600/28a745/ffffff?text=Community+Safety+SA') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .hero-content { /* Example for consistency, won-t be visible on this page */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInSlideUp 1s forwards ease-out;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--white-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-content {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        section.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .feature-grid { /* Not on this page, but here for consistency */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item { /* Not on this page, but here for consistency */
+            background-color: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-item:hover { /* Not on this page, but here for consistency */
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .feature-item h3 { /* Not on this page, but here for consistency */
+            color: var(--secondary-color);
+            font-size: 1.5em;
+        }
+
+        /* Forms (shared styles) */
+        .incident-form { /* Not on this page, but here for consistency */
+            background-color: var(--light-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .form-group { /* Not on this page, but here for consistency */
+            margin-bottom: 20px;
+        }
+
+        .form-group label { /* Not on this page, but here for consistency */
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .form-group input[type="text"], /* Not on this page, but here for consistency */
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group select,
+        .form-group textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus, /* Not on this page, but here for consistency */
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            outline: none;
+        }
+
+        .form-group textarea { /* Not on this page, but here for consistency */
+            resize: vertical;
+        }
+
+        .incident-form button[type="submit"] { /* Not on this page, but here for consistency */
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .form-note { /* Not on this page, but here for consistency */
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        /* Resources section (shared styles) */
+        .resource-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .resource-section:last-child {
+            border-bottom: none;
+        }
+
+        .resource-section h2 {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .resource-section ul {
+            list-style: disc;
+            margin-left: 25px;
+            padding-left: 0;
+        }
+
+        .resource-section li {
+            margin-bottom: 8px;
+        }
+
+        /* --- Responsive Video Container (New CSS) --- */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio (height / width = 9 / 16 = 0.5625) */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000; /* Black background for video area */
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .video-container iframe,
+        .video-container object,
+        .video-container embed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-item {
+            margin-bottom: 30px;
+            background-color: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .video-item h3 {
+            color: var(--primary-color);
+            font-size: 1.4em;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .video-item p {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+
+        /* Footer (shared styles) */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+            }
+            nav ul li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li a {
+                display: block;
+                padding: 10px 0;
+            }
+            #hero {
+                padding: 80px 15px;
+            }
+            #hero h1 {
+                font-size: 2.2em;
+            }
+            #hero p {
+                font-size: 1em;
+            }
+            .btn {
+                display: block;
+                width: calc(100% - 20px);
+                box-sizing: border-box;
+                margin: 10px auto;
+            }
+            main {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            section h2 {
+                font-size: 1.6em;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .incident-form {
+                padding: 20px;
+            }
+            .video-item { /* Adjust padding for video items on smaller screens */
+                padding: 10px;
+            }
+        }
+    </style>
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // Initialize Firebase
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Sign in anonymously or with custom token
+            if (typeof __initial_auth_token !== 'undefined') {
+                signInWithCustomToken(auth, __initial_auth_token).catch((error) => {
+                    console.error("Error signing in with custom token:", error);
+                    signInAnonymously(auth).catch(anonError => console.error("Anonymous sign-in failed:", anonError));
+                });
+            } else {
+                signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
+            }
+
+            // Listen for auth state changes
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    console.log("Firebase user ID:", currentUserId);
+                } else {
+                    currentUserId = null;
+                    console.log("No Firebase user is signed in.");
+                }
+            });
+        } else {
+            console.warn("Firebase config not found. Firebase features will not be available.");
+        }
+
+        // Make app, db, auth, and currentUserId available globally for other scripts if needed
+        window.firebaseApp = app;
+        window.firebaseDb = db;
+        window.firebaseAuth = auth;
+        window.getCurrentUserId = () => currentUserId;
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Community Safety SA</div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report-incident.html">Report Incident</a></li>
+                <li><a href="resources.html" class="active">Resources</a></li>
+                <li><a href="news.html">News</a></li>
+                <li class="admin-link"><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <h1>Safety Resources & Tips</h1>
+        <p>Here you'll find valuable information to enhance your personal and community safety.</p>
+
+        <section class="resource-section">
+            <h2>Emergency Contact Numbers</h2>
+            <ul>
+                <li>South African Police Service (SAPS) Emergency: 10111</li>
+                <li>Ambulance / Fire Department (National): 10177</li>
+                <li>ER24 Emergency Medical Services: 084 124</li>
+                <li>Local Police Station:** [Find your local station contact details online]</li>
+                <li>Local Neighborhood Watch:** [Contact your local NW coordinator]</li>
+            </ul>
+        </section>
+
+        <section class="resource-section">
+            <h2>General Safety Tips</h2>
+            <h3>Home Safety</h3>
+            <ul>
+                <li>Ensure all doors and windows are securely locked, even when home.</li>
+                <li>Install alarm systems and security cameras.</li>
+                <li>Keep valuables out of sight from windows.</li>
+                <li>Be cautious of strangers at your door.</li>
+                <li>Regularly check your perimeter for vulnerabilities.</li>
+            </ul>
+
+            <h3>Personal Safety</h3>
+            <ul>
+                <li>Be aware of your surroundings, especially in public spaces.</li>
+                <li>Avoid walking alone at night in dimly lit areas.</li>
+                <li>Limit distractions like cell phone use when walking.</li>
+                <li>Share your travel plans with a trusted person.</li>
+                <li>Carry a personal alarm if you feel unsafe.</li>
+            </ul>
+
+            <h3>Vehicle Safety</h3>
+            <ul>
+                <li>Always lock your car doors and close windows, even for short stops.</li>
+                <li>Avoid leaving valuables visible in your car.</li>
+                <li>Park in well-lit, secure areas.</li>
+                <li>Be wary of people approaching your vehicle at intersections.</li>
+            </ul>
+        </section>
+
+        <section class="resource-section">
+            <h2>Crime Prevention Initiatives</h2>
+            <p>Learn more about local initiatives in your area:</p>
+            <ul>
+                <li>Community Policing Forums (CPFs)</li>
+                <li>Neighborhood Watch Programs</li>
+                <li>Victim Support Services</li>
+                <li>Anti-GBV Campaigns</li>
+            </ul>
+            <p>For more detailed information, consider visiting the official SAPS website or your local municipal website.</p>
+        </section>
+
+        <section class="resource-section">
+            <h2>Safety Video Previews</h2>
+            <p>Watch these short videos for practical safety advice:</p>
+
+            <div class="video-item">
+                <h3>Home Security Basics (SA Context)</h3>
+                <p>Tips for securing your home against intruders and improving overall safety, with a focus on local considerations.</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/b9PgN1TXJNU?controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <small>Source: Carte Blanche (Simulated)</small>
+            </div>
+
+            <div class="video-item">
+                <h3>Personal Safety Tips</h3>
+                <p>Advice on staying vigilant and safe when out and about, applicable to various public situations.</p>
+                <div class="video-container">
+                    <!-- Updated src for a new, available video on personal safety -->
+                    <iframe src="https://www.youtube.com/embed/NEJBZDRT2fY?controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <small>Source: Region Security Guarding (Simulated)</small>
+            </div>
+
+            <div class="video-item">
+                <h3>Vehicle Anti-Hijacking Tips (SA Context)</h3>
+                <p>Learn how to reduce the risk of vehicle hijacking and what to do in an incident, from a South African perspective.</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/GV20XUIypn8?controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <small>Source: Arrive Alive (Simulated)</small>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Community Safety SA. All rights reserved.</p>
+        <p>For emergencies, dial 10111 (SAPS) or 10177 (Ambulance/Fire).</p>
+    </footer>
+    <script>
+        /* Main JavaScript for animations and nav highlighting */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Highlight active navigation link
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
+                    link.classList.add('active');
+                }
+            });
+
+            // Section animation observer
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Safety SA - News</title>
+    <style>
+        /* CSS EMBEDDED DIRECTLY HERE */
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #007bff;
+            --accent-color: #dc3545;
+            --text-color: #333;
+            --light-bg: #f4f7f6;
+            --white-bg: #ffffff;
+            --border-color: #ddd;
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #e6e6e6;
+            border-bottom: 2px solid white;
+        }
+
+        /* Admin link styling - visible for demo, hide in real app */
+        .admin-link {
+            /* display: none; */ /* Uncomment this in a real application */
+        }
+
+        /* Hero section is not on this page, but shared styles still apply */
+        #hero { /* Example for consistency, won't be visible on this page */
+            background: url('https://placehold.co/1500x600/28a745/ffffff?text=Community+Safety+SA') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .hero-content { /* Example for consistency, won't be visible on this page */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInSlideUp 1s forwards ease-out;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--white-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-content {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        section.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* News Article Specific Styles */
+        .news-article {
+            background-color: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .news-article:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .news-article h3 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .news-article p {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .news-article small {
+            display: block; /* Ensures date/source is on its own line */
+            color: #777;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        /* Stats Section Styling */
+        .stats-section {
+            margin-top: 50px;
+            border-top: 2px solid var(--border-color);
+            padding-top: 30px;
+        }
+
+        .stats-section h2 {
+            text-align: center;
+            color: var(--secondary-color);
+            border-bottom: none;
+            margin-bottom: 30px; /* More space below heading */
+        }
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .chart-box {
+            background-color: var(--white-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px; /* Limit chart width */
+            box-sizing: border-box;
+        }
+
+        .chart-box canvas {
+            max-width: 100%;
+            height: auto; /* Ensure canvas is responsive */
+            display: block;
+        }
+
+        /* Empty state for charts */
+        .no-data-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        /* Footer (shared styles) */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+            }
+            nav ul li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li a {
+                display: block;
+                padding: 10px 0;
+            }
+            #hero {
+                padding: 80px 15px;
+            }
+            #hero h1 {
+                font-size: 2.2em;
+            }
+            #hero p {
+                font-size: 1em;
+            }
+            .btn {
+                display: block;
+                width: calc(100% - 20px);
+                box-sizing: border-box;
+                margin: 10px auto;
+            }
+            main {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            section h2 {
+                font-size: 1.6em;
+            }
+            .chart-box {
+                width: 100%; /* Full width on small screens */
+                max-width: none;
+            }
+        }
+    </style>
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    </script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Community Safety SA</div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report-incident.html">Report Incident</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="news.html" class="active">News</a></li>
+                <li class="admin-link"><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <h1>Latest Community Safety News</h1>
+        <p>Stay informed about important developments, initiatives, and success stories aimed at enhancing safety across South Africa.</p>
+
+        <section id="news-articles">
+            <div class="news-article">
+                <h3>Umhlanga Police Station Upgrades to Enhance Community Safety</h3>
+                <p>The Umhlanga police station is undergoing significant upgrades, including immediate installation of a perimeter fence, repairs to the main gate, and restoration of the generator. This initiative aims to improve security and service delivery, with plans for a permanent building to replace the current prefabricated structure. Residents have advocated for these changes, highlighting the station's crucial role in a rapidly developing area.</p>
+                <small>Published: June 10, 2025 | Source: IOL (Simulated)</small>
+            </div>
+
+            <div class="news-article">
+                <h3>Four New Rapid Response Vehicles Strengthen George's Safety Capability</h3>
+                <p>George Municipality has acquired four new rapid response vehicles for its newly established Community Safety and Mobility Directorate. These specialized vehicles will be deployed as part of a Rapid Response Unit. Additionally, law enforcement officers are undergoing specialized Peace Officer training and firearm training to enhance their operational capacity and support SAPS in ensuring public safety.</p>
+                <small>Published: June 9, 2025 | Source: George Municipality (Simulated)</small>
+            </div>
+
+            <div class="news-article">
+                <h3>Youth Month: Constable Shika's Innovative Approach to Community Safety in Limpopo</h3>
+                <p>Constable Mogalakwena Veronica Shika of SAPS Westenburg in Limpopo is being celebrated for her innovative anti-bullying campaign across local schools, which has measurably reduced bullying incidents. As a social crime prevention coordinator, she coordinates over 30 youth crime prevention members and is involved in spiritual crime prevention programs, embodying youth leadership in community safety.</p>
+                <small>Published: June 9, 2025 | Source: IOL (Simulated)</small>
+            </div>
+
+            <div class="news-article">
+                <h3>UJ and Gauteng Department of Community Safety Partner for Safer Campuses</h3>
+                <p>The University of Johannesburg (UJ) has partnered with the Gauteng Department of Community Safety to create safer environments for students, staff, and the public. This collaboration integrates UJ's security systems with the Provincial Integrated Community Centre and includes joint safety awareness campaigns focusing on Gender-Based Violence, Human Trafficking, and Substance Abuse, leveraging technology like CCTV.</p>
+                <small>Published: March 28, 2025 | Source: University of Johannesburg News (Simulated)</small>
+            </div>
+
+            <div class="news-article">
+                <h3>Neighborhood Watch Helps Save Elderly Passenger from Hijacking in Cape Town</h3>
+                <p>A courageous neighborhood watch group in Cape Town recently played a pivotal role in rescuing an 88-year-old passenger from a hijacking. The quick actions of the watch members, who followed the vehicle and alerted Metro Police, led to a car chase and the eventual arrest of the perpetrator. This incident highlights the critical role of community involvement in crime prevention.</p>
+                <small>Published: February 20, 2024 | Source: Good Things Guy (Simulated)</small>
+            </div>
+        </section>
+
+        <section id="national-stats" class="stats-section animate-in page-content">
+            <h2>National Crime Statistics Overview</h2>
+            <p class="form-note">Data sourced from official South African Police Service (SAPS) reports and analyses (2023-2025).</p>
+            <div class="chart-container">
+                <div class="chart-box">
+                    <h3>Key Contact Crimes (Annual 2023/2024)</h3>
+                    <canvas id="annualCrimeChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Car Hijackings (Jan-Mar 2025 vs. Q1 2024)</h3>
+                    <canvas id="hijackingTrendChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Provincial Hijacking Distribution (Jan-Mar 2025)</h3>
+                    <canvas id="provincialHijackingChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="community-stats" class="stats-section animate-in page-content">
+            <h2>Your Reported Incident Statistics</h2>
+            <p class="form-note">These statistics reflect incidents *you* have reported. For community-wide data, a separate public aggregation would be needed.</p>
+            <div id="personalStatsContent">
+                <div class="chart-container">
+                    <div class="chart-box">
+                        <h3>Incident Type Distribution</h3>
+                        <canvas id="incidentTypeChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Incidents Over Time</h3>
+                        <canvas id="incidentsOverTimeChart"></canvas>
+                    </div>
+                </div>
+                <div id="noStatsMessage" class="no-data-message" style="display: none;">
+                    <p>No incident data available to display statistics. Please report an incident to see your personalized stats!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Community Safety SA. All rights reserved.</p>
+        <p>For emergencies, dial 10111 (SAPS) or 10177 (Ambulance/Fire).</p>
+    </footer>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Initialization (same as before)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+        let incidentTypeChartInstance = null; // To store Chart.js instances for personal stats
+        let incidentsOverTimeChartInstance = null; // To store Chart.js instances for personal stats
+        let annualCrimeChartInstance = null; // New instance for national annual crime
+        let hijackingTrendChartInstance = null; // New instance for national hijacking trend
+        let provincialHijackingChartInstance = null; // New instance for provincial hijacking
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            if (typeof __initial_auth_token !== 'undefined') {
+                signInWithCustomToken(auth, __initial_auth_token).catch((error) => {
+                    console.error("Error signing in with custom token:", error);
+                    signInAnonymously(auth).catch(anonError => console.error("Anonymous sign-in failed:", anonError));
+                });
+            } else {
+                signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    console.log("Firebase user ID for news page:", currentUserId);
+                    // Fetch and render charts once user is authenticated
+                    fetchAndRenderPersonalCharts();
+                } else {
+                    currentUserId = null;
+                    console.log("No Firebase user is signed in for news page.");
+                    // Hide personal charts if no user is logged in or authenticated
+                    document.getElementById('personalStatsContent').style.display = 'none';
+                    document.getElementById('noStatsMessage').style.display = 'block';
+                }
+            });
+        } else {
+            console.warn("Firebase config not found. Firebase features will not be available for personal stats.");
+            document.getElementById('personalStatsContent').style.display = 'none';
+            document.getElementById('noStatsMessage').style.display = 'block';
+            document.getElementById('noStatsMessage').innerHTML = "<p>Firebase is not configured, so personalized statistics cannot be loaded.</p>";
+        }
+
+        /**
+         * Fetches personal incident data from Firestore and renders charts.
+         * Displays a message if no data is available.
+         */
+        async function fetchAndRenderPersonalCharts() {
+            if (!db || !currentUserId) {
+                console.warn("Firestore DB or User ID not available for personal charting.");
+                document.getElementById('personalStatsContent').style.display = 'none';
+                document.getElementById('noStatsMessage').style.display = 'block';
+                return;
+            }
+
+            const incidentsCollectionRef = collection(db, `artifacts/${appId}/users/${currentUserId}/incidents`);
+            const q = query(incidentsCollectionRef);
+
+            // Listen for real-time updates to the incidents
+            onSnapshot(q, (snapshot) => {
+                const incidents = [];
+                snapshot.forEach((doc) => {
+                    incidents.push(doc.data());
+                });
+
+                if (incidents.length === 0) {
+                    document.getElementById('personalStatsContent').style.display = 'none';
+                    document.getElementById('noStatsMessage').style.display = 'block';
+                    return;
+                } else {
+                    document.getElementById('personalStatsContent').style.display = 'flex'; // Use flex for chart containers
+                    document.getElementById('noStatsMessage').style.display = 'none';
+                }
+
+                // Process data for charts
+                const incidentTypeCounts = {};
+                const incidentsByMonth = {};
+
+                incidents.forEach(incident => {
+                    // Count incident types
+                    const type = incident.incidentType || 'Unknown';
+                    incidentTypeCounts[type] = (incidentTypeCounts[type] || 0) + 1;
+
+                    // Count incidents by month (e.g., "YYYY-MM")
+                    if (incident.incidentDate) {
+                        try {
+                            const date = new Date(incident.incidentDate);
+                            const yearMonth = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                            incidentsByMonth[yearMonth] = (incidentsByMonth[yearMonth] || 0) + 1;
+                        } catch (e) {
+                            console.error("Error parsing incident date:", incident.incidentDate, e);
+                        }
+                    }
+                });
+
+                renderIncidentTypeChart(incidentTypeCounts);
+                renderIncidentsOverTimeChart(incidentsByMonth);
+            }, (error) => {
+                console.error("Error fetching incidents for personal charts:", error);
+                document.getElementById('personalStatsContent').style.display = 'none';
+                document.getElementById('noStatsMessage').style.display = 'block';
+                document.getElementById('noStatsMessage').innerHTML = `<p style="color:red;">Error loading personalized statistics: ${error.message}</p>`;
+            });
+        }
+
+        /**
+         * Renders the Incident Type Distribution Pie Chart (Personal Stats).
+         * @param {Object} data - Object with incident types as keys and counts as values.
+         */
+        function renderIncidentTypeChart(data) {
+            const ctx = document.getElementById('incidentTypeChart').getContext('2d');
+
+            // Destroy existing chart instance if it exists
+            if (incidentTypeChartInstance) {
+                incidentTypeChartInstance.destroy();
+            }
+
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            const backgroundColors = [
+                '#28a745', '#007bff', '#dc3545', '#ffc107', '#17a2b8', '#6c757d', '#f8f9fa', '#343a40', '#6f42c1', '#fd7e14'
+            ];
+            const borderColors = labels.map((_, i) => backgroundColors[i % backgroundColors.length]); // Use same colors for borders
+
+            incidentTypeChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Incident Type Distribution'
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Renders the Incidents Over Time Bar Chart (Personal Stats).
+         * @param {Object} data - Object with 'YYYY-MM' as keys and incident counts as values.
+         */
+        function renderIncidentsOverTimeChart(data) {
+            const ctx = document.getElementById('incidentsOverTimeChart').getContext('2d');
+
+            // Destroy existing chart instance if it exists
+            if (incidentsOverTimeChartInstance) {
+                incidentsOverTimeChartInstance.destroy();
+            }
+
+            // Sort months chronologically
+            const sortedMonths = Object.keys(data).sort();
+            const labels = sortedMonths.map(month => {
+                const [year, monthNum] = month.split('-');
+                const monthName = new Date(year, parseInt(monthNum) - 1, 1).toLocaleString('default', { month: 'short' });
+                return `${monthName} ${year}`;
+            });
+            const values = sortedMonths.map(month => data[month]);
+
+            incidentsOverTimeChartInstance = new Chart(ctx, {
+                type: 'bar', // Can be 'line' or 'bar'
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Incidents',
+                        data: values,
+                        backgroundColor: 'rgba(0, 123, 255, 0.7)', // Blue
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: true,
+                            text: 'Incidents Over Time'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0 // Ensure integer ticks for count
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // --- National Statistics Chart Functions ---
+
+        /**
+         * Renders the Annual Crime Statistics Bar Chart.
+         */
+        function renderAnnualCrimeChart() {
+            const ctx = document.getElementById('annualCrimeChart').getContext('2d');
+
+            if (annualCrimeChartInstance) {
+                annualCrimeChartInstance.destroy();
+            }
+
+            const labels = ['Murder', 'Kidnapping', 'Sexual Offences', 'Attempted Murder', 'Assault GBH', 'Common Assault', 'Robbery with Aggravating Circumstances'];
+            const data = [27621, 17061, 42569, 28451, 179572, 190399, 150317]; // Data from 2023/2024 financial year
+
+            annualCrimeChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Incidents (2023/2024)',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(220, 53, 69, 0.7)', // Accent color for Murder
+                            'rgba(255, 193, 7, 0.7)', // Yellow for Kidnapping
+                            'rgba(0, 123, 255, 0.7)', // Blue for Sexual Offences
+                            'rgba(40, 167, 69, 0.7)', // Primary green for Attempted Murder
+                            'rgba(23, 162, 184, 0.7)', // Info blue for Assault GBH
+                            'rgba(108, 117, 125, 0.7)', // Gray for Common Assault
+                            'rgba(253, 126, 20, 0.7)' // Orange for Robbery Agg. Circ.
+                        ],
+                        borderColor: [
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(0, 123, 255, 1)',
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(108, 117, 125, 1)',
+                            'rgba(253, 126, 20, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Key Contact Crimes (Annual 2023/2024)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0 // Ensure integer ticks for count
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Renders the Hijacking Trend Bar Chart.
+         */
+        function renderHijackingTrendChart() {
+            const ctx = document.getElementById('hijackingTrendChart').getContext('2d');
+
+            if (hijackingTrendChartInstance) {
+                hijackingTrendChartInstance.destroy();
+            }
+
+            const labels = ['Jan-Mar 2024', 'Jan-Mar 2025'];
+            const data = [5339, 4533]; // Placeholder values (Q4 2024/25 was 4,533, the 15.1% decrease is relative to 'first three months of 2024', so 4533 / (1-0.151) = ~5339)
+
+            hijackingTrendChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Car Hijackings',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)', // Red for 2024
+                            'rgba(75, 192, 192, 0.7)'  // Green for 2025
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Car Hijackings (Jan-Mar Quarterly Comparison)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Renders the Provincial Hijacking Distribution Pie Chart.
+         */
+        function renderProvincialHijackingChart() {
+            const ctx = document.getElementById('provincialHijackingChart').getContext('2d');
+
+            if (provincialHijackingChartInstance) {
+                provincialHijackingChartInstance.destroy();
+            }
+
+            // Data from Jan-Mar 2025 (SAPS Q4 2024/25)
+            const labels = ['Gauteng (55%)', 'KwaZulu-Natal', 'Western Cape', 'Other Provinces'];
+            const data = [2488, 583, 536, (4533 - 2488 - 583 - 536)]; // Total 4533 - known provinces = others
+
+            const backgroundColors = [
+                '#007bff', // Blue for Gauteng
+                '#28a745', // Green for KZN
+                '#ffc107', // Yellow for Western Cape
+                '#6c757d'  // Gray for Other
+            ];
+            const borderColors = labels.map((_, i) => backgroundColors[i % backgroundColors.length]);
+
+            provincialHijackingChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Provincial Hijacking Distribution (Jan-Mar 2025)'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed) {
+                                        label += new Intl.NumberFormat('en-ZA').format(context.parsed) + ' incidents';
+                                        const total = context.dataset.data.reduce((sum, current) => sum + current, 0);
+                                        const percentage = (context.parsed / total * 100).toFixed(1) + '%';
+                                        label += ` (${percentage})`;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        /* Main JavaScript for animations and nav highlighting */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Highlight active navigation link
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
+                    link.classList.add('active');
+                }
+            });
+
+            // Section animation observer
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Render National Stats Charts immediately on DOMContentLoaded
+            renderAnnualCrimeChart();
+            renderHijackingTrendChart();
+            renderProvincialHijackingChart();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+:root {
+    /* Define CSS Variables for consistent theming */
+    --primary-color: #28a745;   /* A strong green for safety and primary actions */
+    --secondary-color: #007bff; /* A vibrant blue for secondary actions/links */
+    --accent-color: #dc3545;    /* A clear red for important alerts or danger */
+    --text-color: #333;         /* Dark gray for main body text */
+    --light-bg: #f4f7f6;        /* Very light gray for subtle backgrounds */
+    --white-bg: #ffffff;        /* Pure white for content areas */
+    --border-color: #ddd;       /* Light gray for borders and separators */
+    --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Base Styles --- */
+body {
+    font-family: var(--font-family-sans);
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden; /* Prevent horizontal scroll bars caused by animations */
+}
+
+/* Ensure images don't overflow */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Removes extra space below images */
+}
+
+/* --- Header & Navigation --- */
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 0; /* Vertical padding only, horizontal controlled by nav */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow for depth */
+}
+
+nav {
+    display: flex;
+    justify-content: space-between; /* Puts logo on left, nav links on right */
+    align-items: center; /* Vertically centers items */
+    max-width: 1200px; /* Constrains content width */
+    margin: 0 auto; /* Centers the nav horizontally */
+    padding: 0 20px; /* Horizontal padding for smaller screens */
+    flex-wrap: wrap; /* Allows navigation items to wrap on smaller screens */
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase; /* Makes the logo stand out */
+    letter-spacing: 1px;
+}
+
+nav ul {
+    list-style: none; /* Removes bullet points */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Makes nav items horizontal */
+    flex-wrap: wrap; /* Allows individual nav items to wrap */
+}
+
+nav ul li {
+    margin-left: 25px; /* Spacing between nav items */
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none; /* Removes underline from links */
+    font-weight: 500;
+    padding: 5px 0; /* Padding for hover/active underline effect */
+    transition: color 0.3s ease, border-bottom 0.3s ease; /* Smooth transitions for hover */
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    color: #e6e6e6; /* Slightly lighter white on hover */
+    border-bottom: 2px solid white; /* Underline effect on hover/active page */
+}
+
+/* --- Hero Section --- */
+#hero {
+    background: url('https://via.placeholder.com/1500x600/28a745/ffffff?text=Community+Safety+SA') no-repeat center center/cover; /* Placeholder image */
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+    position: relative;
+    overflow: hidden; /* Important for animation: Hides content that's animating from outside */
+}
+
+/* Semi-transparent overlay to make text more readable on background image */
+#hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Dark overlay */
+    z-index: 1; /* Ensures overlay is behind text, but over background */
+}
+
+.hero-content {
+    position: relative; /* Positions content above the overlay */
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    /* Initial state for the fade-in-slide-up animation */
+    opacity: 0;
+    transform: translateY(20px);
+    /* Animation properties */
+    animation: fadeInSlideUp 1s forwards ease-out; /* 'forwards' keeps final state */
+    animation-delay: 0.5s; /* Delay for a smoother intro */
+}
+
+/* Keyframe animation for hero content */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#hero h1 {
+    font-size: 3em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Adds a subtle shadow to text */
+}
+
+#hero p {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-block; /* Allows side-by-side buttons */
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions for hover effects */
+    margin: 10px; /* Spacing between buttons */
+    border: none; /* Remove default button border */
+    cursor: pointer; /* Indicate clickable */
+}
+
+.btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-3px); /* Lifts button slightly */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2); /* Adds a larger shadow on hover */
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Grayish color */
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Darker gray on hover */
+}
+
+.btn-small {
+    padding: 8px 15px;
+    font-size: 0.9em;
+}
+
+/* --- Main Content Sections --- */
+main {
+    max-width: 1200px;
+    margin: 20px auto; /* Top/bottom margin, horizontal auto-center */
+    padding: 20px;
+    background-color: var(--white-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.page-content { /* Specific styling for inner pages like Report Incident, Resources, About */
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 40px; /* Space between sections */
+    /* Initial state for scroll-in animation */
+    opacity: 0;
+    transform: translateY(30px);
+    /* Transition for smooth animation when 'animate-in' class is added by JS */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Class added by JavaScript when section comes into view */
+section.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+section h2 {
+    color: var(--primary-color);
+    font-size: 2em;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-color); /* Underline for section headings */
+    padding-bottom: 10px;
+}
+
+.feature-grid {
+    display: grid;
+    /* Responsive grid: auto-fit creates as many columns as fit, min 300px wide */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px; /* Spacing between grid items */
+}
+
+.feature-item {
+    background-color: var(--light-bg);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    text-align: center;
+    /* Smooth transition for hover effect */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px) scale(1.02); /* Lifts and slightly enlarges */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* More prominent shadow on hover */
+}
+
+.feature-item h3 {
+    color: var(--secondary-color);
+    margin-top: 0;
+    font-size: 1.5em;
+}
+
+/* --- Form Styling (Report Incident Page) --- */
+.incident-form {
+    background-color: var(--light-bg);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block; /* Makes label appear on its own line */
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group select,
+.form-group textarea {
+    width: calc(100% - 20px); /* Full width minus padding to prevent overflow */
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box; /* Ensures padding is included in the element's total width/height */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth focus effect */
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color); /* Highlight border on focus */
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); /* Subtle green glow on focus */
+    outline: none; /* Remove default browser outline */
+}
+
+.form-group textarea {
+    resize: vertical; /* Allow users to resize textarea vertically */
+}
+
+.incident-form button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+.form-note {
+    font-size: 0.9em;
+    color: #666;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* --- Resources Section Specifics --- */
+.resource-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color); /* Separator between resource sections */
+}
+
+.resource-section:last-child {
+    border-bottom: none; /* No border for the last section */
+}
+
+.resource-section h2 {
+    color: var(--primary-color);
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    border-bottom: none; /* The main section h2 handles the border */
+    padding-bottom: 0;
+}
+
+.resource-section ul {
+    list-style: disc; /* Standard bullet points */
+    margin-left: 25px;
+    padding-left: 0;
+}
+
+.resource-section li {
+    margin-bottom: 8px; /* Spacing between list items */
+}
+
+/* --- Footer --- */
+footer {
+    background-color: var(--text-color); /* Dark gray background */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+footer p {
+    margin: 5px 0;
+    font-size: 0.9em;
+}
+
+/* --- Responsive Design (Media Queries) --- */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column; /* Stack nav items vertically */
+        align-items: flex-start;
+    }
+    nav ul {
+        flex-direction: column;
+        width: 100%; /* Make nav list take full width */
+        margin-top: 15px;
+        align-items: flex-start;
+    }
+    nav ul li {
+        margin: 5px 0; /* Adjust vertical spacing */
+        width: 100%;
+        text-align: center; /* Center links in mobile nav */
+    }
+    nav ul li a {
+        display: block; /* Make links take full width for easier tapping */
+        padding: 10px 0;
+    }
+    #hero {
+        padding: 80px 15px; /* Reduce padding on smaller screens */
+    }
+    #hero h1 {
+        font-size: 2.2em; /* Smaller font size for hero heading */
+    }
+    #hero p {
+        font-size: 1em;
+    }
+    .btn {
+        display: block; /* Make buttons stack vertically */
+        width: calc(100% - 20px); /* Full width minus padding */
+        box-sizing: border-box;
+        margin: 10px auto; /* Center stacked buttons */
+    }
+    main {
+        margin: 15px auto;
+        padding: 15px;
+    }
+    section h2 {
+        font-size: 1.6em; /* Smaller section headings */
+    }
+    .feature-grid {
+        grid-template-columns: 1fr; /* Stack features on mobile */
+    }
+    .incident-form {
+        padding: 20px; /* Adjust form padding */
+    }
+}

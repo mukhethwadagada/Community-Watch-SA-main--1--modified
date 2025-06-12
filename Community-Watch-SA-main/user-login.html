@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Safety SA - Login / Register</title>
+    <style>
+        /* CSS EMBEDDED DIRECTLY HERE (Consistent with other pages) */
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #007bff;
+            --accent-color: #dc3545;
+            --text-color: #333;
+            --light-bg: #f4f7f6;
+            --white-bg: #ffffff;
+            --border-color: #ddd;
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #e6e6e6;
+            border-bottom: 2px solid white;
+        }
+
+        /* Admin link styling - visible for demo, hide in real app */
+        .admin-link {
+            /* display: none; */ /* Uncomment this in a real application */
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--white-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-content {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        section.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Login/Register Form Styles */
+        .auth-form {
+            background-color: var(--white-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .auth-form h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: calc(100% - 22px); /* Account for padding and border */
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            outline: none;
+        }
+
+        .auth-form button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .auth-form button.btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .auth-form button.btn-primary:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .auth-form p {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .auth-form p a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-form p a:hover {
+            text-decoration: underline;
+        }
+
+        /* Error message style */
+        .error-message {
+            color: var(--accent-color);
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Footer (shared styles) */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+            }
+            nav ul li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li a {
+                display: block;
+                padding: 10px 0;
+            }
+            main {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            section h2 {
+                font-size: 1.6em;
+            }
+            .auth-form {
+                padding: 20px;
+                max-width: 90%;
+            }
+        }
+    </style>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCBK45gj9JonoJB0ltmAdpErmxjctbjEM",
+            authDomain: "community-watch-51ba0.firebaseapp.com",
+            projectId: "community-watch-51ba0",
+            storageBucket: "community-watch-51ba0.firebasestorage.app",
+            messagingSenderId: "438147253097",
+            appId: "1:438147253097:web:af1c0a18d6d67d611ab3f8",
+            measurementId: "G-GXVTTS2VQC"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app); // Get auth instance for use
+
+        // Make auth available globally for demonstration/development purposes
+        // In a real app, you might use a more structured approach (e.g., context API in React)
+        window.firebaseAuth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Community Safety SA</div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report-incident.html">Report Incident</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="news.html">News</a></li>
+                <li class="admin-link"><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="user-login.html" class="active">Login / Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <h1>Welcome Back!</h1>
+        <p>Login or Register to access personalized features.</p>
+
+        <section id="auth-section">
+            <div class="auth-form">
+                <h2 id="form-title">Login</h2>
+                <form id="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" id="auth-button" class="btn-primary">Login</button>
+                    <p id="toggle-form-text">Don't have an account? <a href="#" id="toggle-form-link">Register here</a></p>
+                    <div id="error-message" class="error-message" style="display: none;"></div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Community Safety SA. All rights reserved.</p>
+        <p>For emergencies, dial 10111 (SAPS) or 10177 (Ambulance/Fire).</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const authForm = document.getElementById('auth-form');
+            const formTitle = document.getElementById('form-title');
+            const authButton = document.getElementById('auth-button');
+            const toggleFormLink = document.getElementById('toggle-form-link');
+            const errorMessageDiv = document.getElementById('error-message');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+
+            let isRegisterMode = false;
+
+            /**
+             * Updates the form UI based on whether it's in login or register mode.
+             */
+            function updateFormUI() {
+                if (isRegisterMode) {
+                    formTitle.textContent = 'Register';
+                    authButton.textContent = 'Register';
+                    toggleFormLink.textContent = 'Login here';
+                    document.getElementById('toggle-form-text').innerHTML = 'Already have an account? <a href="#" id="toggle-form-link">Login here</a>';
+                    // Re-add listener as innerHTML overwrites it
+                    document.getElementById('toggle-form-link').addEventListener('click', toggleFormMode);
+                } else {
+                    formTitle.textContent = 'Login';
+                    authButton.textContent = 'Login';
+                    toggleFormLink.textContent = 'Register here';
+                    document.getElementById('toggle-form-text').innerHTML = 'Don\'t have an account? <a href="#" id="toggle-form-link">Register here</a>';
+                    // Re-add listener as innerHTML overwrites it
+                    document.getElementById('toggle-form-link').addEventListener('click', toggleFormMode);
+                }
+                errorMessageDiv.style.display = 'none'; // Clear previous errors
+            }
+
+            /**
+             * Toggles between login and register modes.
+             * @param {Event} event - The click event.
+             */
+            function toggleFormMode(event) {
+                event.preventDefault();
+                isRegisterMode = !isRegisterMode;
+                updateFormUI();
+            }
+
+            // Initial UI setup
+            updateFormUI();
+
+            // Event listener for toggling login/register form
+            // Initial attachment, will be re-attached by updateFormUI if needed
+            toggleFormLink.addEventListener('click', toggleFormMode);
+
+            // Handle form submission (Login or Register)
+            authForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                errorMessageDiv.style.display = 'none'; // Hide any previous error messages
+
+                const email = emailInput.value;
+                const password = passwordInput.value;
+
+                // Check if Firebase Auth is available
+                if (!window.firebaseAuth || !window.createUserWithEmailAndPassword || !window.signInWithEmailAndPassword) {
+                    errorMessageDiv.textContent = "Firebase Authentication is not available. Please check console for errors.";
+                    errorMessageDiv.style.display = 'block';
+                    console.error("Firebase Auth not loaded or available.");
+                    return;
+                }
+
+                try {
+                    if (isRegisterMode) {
+                        // Register new user
+                        const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+                        console.log("User registered:", userCredential.user);
+                        // Redirect or show success message
+                        window.location.href = 'index.html'; // Redirect to home page
+                    } else {
+                        // Sign in existing user
+                        const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                        console.log("User signed in:", userCredential.user);
+                        // Redirect or show success message
+                        window.location.href = 'index.html'; // Redirect to home page
+                    }
+                } catch (error) {
+                    console.error("Authentication Error:", error.code, error.message);
+                    let displayMessage = "An unexpected error occurred. Please try again.";
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            displayMessage = 'This email address is already in use.';
+                            break;
+                        case 'auth/invalid-email':
+                            displayMessage = 'The email address is not valid.';
+                            break;
+                        case 'auth/operation-not-allowed':
+                            displayMessage = 'Email/password accounts are not enabled. Contact admin.';
+                            break;
+                        case 'auth/weak-password':
+                            displayMessage = 'Password should be at least 6 characters.';
+                            break;
+                        case 'auth/user-disabled':
+                            displayMessage = 'This user account has been disabled.';
+                            break;
+                        case 'auth/user-not-found':
+                        case 'auth/wrong-password':
+                            displayMessage = 'Invalid email or password.';
+                            break;
+                        default:
+                            displayMessage = `Error: ${error.message}`; // Fallback to generic message
+                    }
+                    errorMessageDiv.textContent = displayMessage;
+                    errorMessageDiv.style.display = 'block';
+                }
+            });
+
+            // Highlight active navigation link
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
+                    link.classList.add('active');
+                }
+            });
+
+            // Section animation observer (for general consistency across pages)
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

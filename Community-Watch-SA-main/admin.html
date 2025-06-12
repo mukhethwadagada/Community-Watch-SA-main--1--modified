@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Safety SA - Admin Dashboard</title>
+    <style>
+        /* CSS EMBEDDED DIRECTLY HERE (Consistent with other pages, plus admin-specific styles) */
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #007bff;
+            --accent-color: #dc3545;
+            --text-color: #333;
+            --light-bg: #f4f7f6;
+            --white-bg: #ffffff;
+            --border-color: #ddd;
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Specific background for the report page (for consistency, not used here) */
+        .report-page-body {
+            background-color: #e0f0e0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #e6e6e6;
+            border-bottom: 2px solid white;
+        }
+
+        /* Admin link should typically be protected in a real app */
+        /* .admin-link {
+            For demonstration, it's visible. In a real app,
+               this would be dynamically shown/hidden based on authentication.
+            display: none;  Uncomment this in a real application 
+        } */
+
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--white-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-content {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        section.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Admin specific styles */
+        .incidents-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .incidents-table th,
+        .incidents-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .incidents-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .incidents-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        .incidents-table tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        /* Small text for optional fields */
+        .incidents-table .optional-info {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        /* Footer (shared styles) */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+            }
+            nav ul li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li a {
+                display: block;
+                padding: 10px 0;
+            }
+            main {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            section h2 {
+                font-size: 1.6em;
+            }
+            .incidents-table, .incidents-table tbody, .incidents-table th, .incidents-table td, .incidents-table tr {
+                display: block;
+            }
+            .incidents-table thead {
+                display: none; /* Hide table headers (but not important for screen readers) */
+            }
+            .incidents-table tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background-color: var(--white-bg);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .incidents-table td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+            .incidents-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: calc(50% - 20px);
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+                text-align: left;
+                color: var(--primary-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Community Safety SA</div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report-incident.html">Report Incident</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="news.html">News</a></li>
+                <li class="admin-link"><a href="admin.html" class="active">Admin</a></li>
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <h1>Admin Dashboard</h1>
+        <p>Overview of reported incidents and community safety data.</p>
+
+        <section id="reported-incidents">
+            <h2>Reported Incidents (Simulated)</h2>
+            <table class="incidents-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Description</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody id="incidentsTableBody">
+                    <!-- Incidents will be loaded here by JavaScript -->
+                </tbody>
+            </table>
+            <p class="form-note"><em>Note: This data is simulated and not stored persistently. In a real system, incidents would be stored in a database.</em></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Community Safety SA. All rights reserved.</p>
+        <p>For emergencies, dial 10111 (SAPS) or 10177 (Ambulance/Fire).</p>
+    </footer>
+
+    <script>
+        /* JAVASCRIPT EMBEDDED DIRECTLY HERE */
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Admin Dashboard Loaded!');
+
+            // Simulated incident data (replace with real data from a backend in a live app)
+            const simulatedIncidents = [
+                {
+                    type: "",
+                    date: "",
+                    time: "14:30",
+                    location: "Main Street & Oak Ave",
+                    description: "Unfamiliar vehicle parked for extended periods, occupants observing properties.",
+                    contact: "john.doe@example.com"
+                },
+                {
+                    type: "Vandalism",
+                    date: "2025-06-07",
+                    time: "03:00",
+                    location: "Community Park Playground",
+                    description: "Swings broken, graffiti on slide.",
+                    contact: "jane.smith@example.com"
+                },
+                {
+                    type: "Noise Complaint",
+                    date: "2025-06-06",
+                    time: "23:45",
+                    location: "Apartment Building 123, Unit 5",
+                    description: "Loud music late into the night.",
+                    contact: "anonymous@example.com"
+                },
+                {
+                    type: "Loitering",
+                    date: "2025-06-05",
+                    time: "19:00",
+                    location: "Near local convenience store",
+                    description: "Group of individuals regularly gathering, intimidating customers.",
+                    contact: "" // No contact provided
+                },
+                {
+                    type: "Other",
+                    date: "2025-06-04",
+                    time: "10:15",
+                    location: "Public Library",
+                    description: "Disruptive behavior inside the library, staff feeling unsafe.",
+                    contact: "library.manager@example.com"
+                }
+            ];
+
+            const incidentsTableBody = document.getElementById('incidentsTableBody');
+
+            // Function to render incidents into the table
+            function renderIncidents() {
+                incidentsTableBody.innerHTML = ''; // Clear existing rows
+                simulatedIncidents.forEach(incident => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="Type">${incident.type}</td>
+                        <td data-label="Date">${incident.date}</td>
+                        <td data-label="Time">${incident.time}</td>
+                        <td data-label="Location">${incident.location}</td>
+                        <td data-label="Description">${incident.description}</td>
+                        <td data-label="Contact">${incident.contact || '<span class="optional-info">N/A</span>'}</td>
+                    `;
+                    incidentsTableBody.appendChild(row);
+                });
+            }
+
+            renderIncidents(); // Call on page load
+
+            // Highlight active navigation link
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
+                    link.classList.add('active');
+                }
+            });
+
+            // Section animation observer (copied from other pages for consistency, though less relevant here)
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

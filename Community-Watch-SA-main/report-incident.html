@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Safety SA - Report Incident</title>
+    <style>
+        /* CSS EMBEDDED DIRECTLY HERE */
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #007bff;
+            --accent-color: #dc3545;
+            --text-color: #333;
+            --light-bg: #f4f7f6;
+            --white-bg: #ffffff;
+            --border-color: #ddd;
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;         
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg); /* Default background */
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Specific background for the report page */
+        .report-page-body {
+            background-color: #e0f0e0; /* A slightly softer green/gray to differentiate */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #e6e6e6;
+            border-bottom: 2px solid white;
+        }
+
+        /* Admin link styling - visible for demo, hide in real app */
+        .admin-link {
+            /* display: none; */ /* Uncomment this in a real application */
+        }
+
+        /* Hero section is not on this page, but shared styles still apply */
+        #hero { /* Example for consistency, won't be visible on this page */
+            background: url('https://placehold.co/1500x600/28a745/ffffff?text=Community+Safety+SA') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .hero-content { /* Example for consistency, won't be visible on this page */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInSlideUp 1s forwards ease-out;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--white-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-content {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        section.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .feature-grid { /* Not on this page, but here for consistency */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item { /* Not on this page, but here for consistency */
+            background-color: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-item:hover { /* Not on this page, but here for consistency */
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .feature-item h3 { /* Not on this page, but here for consistency */
+            color: var(--secondary-color);
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        /* Forms (shared styles) */
+        .incident-form {
+            background-color: var(--white-bg); /* Changed to white for contrast on new body background */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group select,
+        .form-group textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .incident-form button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .form-note {
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        /* Resources section (shared styles) */
+        .resource-section { /* Not on this page, but here for consistency */
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .resource-section:last-child { /* Not on this page, but here for consistency */
+            border-bottom: none;
+        }
+
+        .resource-section h2 { /* Not on this page, but here for consistency */
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .resource-section ul { /* Not on this page, but here for consistency */
+            list-style: disc;
+            margin-left: 25px;
+            padding-left: 0;
+        }
+
+        .resource-section li { /* Not on this page, but here for consistency */
+            margin-bottom: 8px;
+        }
+
+        /* Responsive Video Container (New CSS from Resources page, for consistency) */
+        .video-container { /* Not on this page, but here for consistency */
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio (height / width = 9 / 16 = 0.5625) */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000; /* Black background for video area */
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .video-container iframe, /* Not on this page, but here for consistency */
+        .video-container object,
+        .video-container embed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-item { /* Not on this page, but here for consistency */
+            margin-bottom: 30px;
+            background-color: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .video-item h3 { /* Not on this page, but here for consistency */
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .video-item p { /* Not on this page, but here for consistency */
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        /* New: News Article Specific Styles (for consistency) */
+        .news-article {
+            background-color: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .news-article:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .news-article h3 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .news-article p {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .news-article small {
+            display: block; /* Ensures date/source is on its own line */
+            color: #777;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        /* Confirmation Message Style */
+        .confirmation-message {
+            background-color: #d4edda; /* Light green for success */
+            color: #155724; /* Dark green text */
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: left;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .confirmation-message h3 {
+            color: #155724;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .confirmation-message p {
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Location specific styles */
+        .location-input-group {
+            display: flex;
+            align-items: flex-end; /* Align button to bottom of input */
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+        .location-input-group > div {
+            flex-grow: 1; /* Allows inputs to take available space */
+            min-width: 150px; /* Minimum width before wrapping */
+        }
+        .location-input-group button {
+            flex-shrink: 0; /* Prevents button from shrinking */
+            height: 42px; /* Match input height roughly */
+            padding: 10px 15px;
+            margin-bottom: 0; /* Remove default button margin */
+        }
+        .location-info {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: -15px; /* Adjust spacing */
+            margin-bottom: 15px;
+        }
+        .location-info.error {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .location-info.loading {
+            color: var(--secondary-color);
+            font-style: italic;
+        }
+
+
+        /* Footer (shared styles) */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+            }
+            nav ul li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li a {
+                display: block;
+                padding: 10px 0;
+            }
+            #hero {
+                padding: 80px 15px;
+            }
+            #hero h1 {
+                font-size: 2.2em;
+            }
+            #hero p {
+                font-size: 1em;
+            }
+            .btn {
+                display: block;
+                width: calc(100% - 20px);
+                box-sizing: border-box;
+                margin: 10px auto;
+            }
+            main {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            section h2 {
+                font-size: 1.6em;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .incident-form {
+                padding: 20px;
+            }
+            .video-item { /* Adjust padding for video items on smaller screens */
+                padding: 10px;
+            }
+            .location-input-group {
+                flex-direction: column; /* Stack button and input vertically */
+                align-items: stretch; /* Stretch items to full width */
+            }
+            .location-input-group button {
+                width: 100%; /* Full width button */
+            }
+            .location-input-group > div {
+                min-width: unset; /* Remove min-width on small screens */
+            }
+        }
+    </style>
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // Initialize Firebase variables globally
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+
+        // Initialize Firebase if configuration is available
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Handle authentication: prefer custom token, fallback to anonymous
+            if (typeof __initial_auth_token !== 'undefined') {
+                signInWithCustomToken(auth, __initial_auth_token).catch((error) => {
+                    console.error("Error signing in with custom token:", error);
+                    signInAnonymously(auth).catch(anonError => console.error("Anonymous sign-in failed:", anonError));
+                });
+            } else {
+                signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
+            }
+
+            // Listen for changes in authentication state to get the current user ID
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    console.log("Firebase user ID for reporting:", currentUserId);
+                } else {
+                    currentUserId = null;
+                    console.log("No Firebase user is signed in for reporting.");
+                }
+            });
+        } else {
+            console.warn("Firebase config not found. Firebase features (including data storage) will not be available for reporting.");
+        }
+
+        // Expose Firebase instances and currentUserId getter globally for use by other scripts
+        window.firebaseApp = app;
+        window.firebaseDb = db;
+        window.firebaseAuth = auth;
+        window.getCurrentUserId = () => currentUserId;
+    </script>
+    <!-- EmailJS CDN -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Replace with your actual EmailJS Public Key
+            emailjs.init("7f1GegSzuNOm7r4Nw");
+        })();
+    </script>
+</head>
+<body class="report-page-body">
+    <header>
+        <nav>
+            <div class="logo">Community Safety SA</div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report-incident.html" class="active">Report Incident</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="news.html">News</a></li>
+                <li class="admin-link"><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="user-login.html">Login / Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <h1>Report an Incident</h1>
+        <p>Please use this form to report **non-urgent** incidents, suspicious activities, or community safety concerns. For emergencies, please call **10111** immediately.</p>
+
+        <form class="incident-form" id="contact-form">
+            <div class="form-group">
+                <label for="incidentType">Type of Incident:</label>
+                <select id="incidentType" name="incidentType" required>
+                    <option value="">-- Select --</option>
+                    <option value="Suspicious Activity">Suspicious Activity</option>
+                    <option value="Vandalism">Vandalism</option>
+                    <option value="Loitering">Loitering</option>
+                    <option value="Graffiti">Graffiti</option>
+                    <option value="Noise Complaint">Noise Complaint</option>
+                    <option value="Other">Other (please describe)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="incidentDate">Date of Incident:</label>
+                <input type="date" id="incidentDate" name="incidentDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="incidentTime">Time of Incident (approx.):</label>
+                <input type="time" id="incidentTime" name="incidentTime">
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location of Incident (e.g., Street Name, Intersection, Landmark):</label>
+                <input type="text" id="location" name="location" placeholder="e.g., 123 Main St, Corner of Oak & Pine">
+            </div>
+
+            <div class="form-group">
+                <label for="liveLocation">Current Live Location (Optional):</label>
+                <div class="location-input-group">
+                    <div>
+                        <input type="text" id="latitude" name="latitude" placeholder="Latitude" readonly>
+                    </div>
+                    <div>
+                        <input type="text" id="longitude" name="longitude" placeholder="Longitude" readonly>
+                    </div>
+                    <button type="button" id="getLocationBtn" class="btn btn-secondary btn-small">Get Current Location</button>
+                </div>
+                <p id="locationStatus" class="location-info">Click the button to get your current coordinates.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Detailed Description:</label>
+                <textarea id="description" name="description" rows="6" placeholder="Provide as much detail as possible: what happened, who was involved, any vehicle descriptions, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="contactName">Your Name (Optional):</label>
+                <input type="text" id="contactName" name="contactName">
+            </div>
+
+            <div class="form-group">
+                <label for="contactEmail">Your Email (Optional, for follow-up):</label>
+                <input type="email" id="contactEmail" name="contactEmail">
+            </div>
+
+            <div class="form-group">
+                <label for="contactPhone">Your Phone (Optional):</label>
+                <input type="tel" id="contactPhone" name="contactPhone">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Report</button>
+        </form>
+        <p class="form-note"><em>Note: This form now uses EmailJS for sending emails and Firestore for data storage.</em></p>
+
+        <!-- Confirmation Message Section -->
+        <div id="confirmationMessage" class="confirmation-message">
+            <h3>Incident Report Submitted Successfully!</h3>
+            <p>Dear <span id="confName">Community Member</span>,</p>
+            <p>Thank you for submitting your incident report to Community Safety SA. We have received your submission with the following details:</p>
+            <ul>
+                <li><strong>Incident Type:</strong> <span id="confIncidentType"></span></li>
+                <li><strong>Location:</strong> <span id="confLocation"></span></li>
+                <li><strong>Live Coordinates:</strong> <span id="confLiveLocation">N/A</span></li>
+                <li><strong>Date of Incident:</strong> <span id="confIncidentDate"></span></li>
+                <li><strong>Time of Incident:</strong> <span id="confIncidentTime"></span></li>
+            </ul>
+            <p>We appreciate your contribution to a safer community. A confirmation email has been sent to you if you provided your email address.</p>
+            <p>Sincerely,</p>
+            <p>The Community Safety SA Team</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Community Safety SA. All rights reserved.</p>
+        <p>For emergencies, dial 10111 (SAPS) or 10177 (Ambulance/Fire).</p>
+    </footer>
+    <script>
+        /* JAVASCRIPT EMBEDDED DIRECTLY HERE */
+        document.addEventListener('DOMContentLoaded', () => {
+            const incidentForm = document.getElementById('contact-form');
+            const confirmationMessageDiv = document.getElementById('confirmationMessage');
+            const getLocationBtn = document.getElementById('getLocationBtn');
+            const latitudeInput = document.getElementById('latitude');
+            const longitudeInput = document.getElementById('longitude');
+            const locationStatus = document.getElementById('locationStatus');
+
+            // Handle Get Location Button Click
+            if (getLocationBtn) {
+                getLocationBtn.addEventListener('click', () => {
+                    if (navigator.geolocation) {
+                        locationStatus.textContent = 'Getting your location...';
+                        locationStatus.className = 'location-info loading'; // Add loading class
+
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                // Success callback
+                                const lat = position.coords.latitude;
+                                const lon = position.coords.longitude;
+                                latitudeInput.value = lat.toFixed(6); // Format to 6 decimal places
+                                longitudeInput.value = lon.toFixed(6);
+                                locationStatus.textContent = `Location acquired! Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+                                locationStatus.className = 'location-info'; // Remove loading/error classes
+                            },
+                            (error) => {
+                                // Error callback
+                                let errorMessage = 'Unable to retrieve your location.';
+                                switch(error.code) {
+                                    case error.PERMISSION_DENIED:
+                                        errorMessage = 'Location access denied. Please enable location services in your browser settings.';
+                                        break;
+                                    case error.POSITION_UNAVAILABLE:
+                                        errorMessage = 'Location information is unavailable.';
+                                        break;
+                                    case error.TIMEOUT:
+                                        errorMessage = 'The request to get user location timed out.';
+                                        break;
+                                    case error.UNKNOWN_ERROR:
+                                        errorMessage = 'An unknown error occurred.';
+                                        break;
+                                }
+                                latitudeInput.value = '';
+                                longitudeInput.value = '';
+                                locationStatus.textContent = `Error: ${errorMessage}`;
+                                locationStatus.className = 'location-info error'; // Add error class
+                                console.error("Geolocation Error:", error);
+                            },
+                            {
+                                enableHighAccuracy: true, // Request high accuracy
+                                timeout: 10000,           // 10 seconds timeout
+                                maximumAge: 0             // Don't use cached position
+                            }
+                        );
+                    } else {
+                        // Geolocation is not supported by this browser
+                        locationStatus.textContent = 'Geolocation is not supported by your browser.';
+                        locationStatus.className = 'location-info error';
+                        console.error("Geolocation not supported.");
+                    }
+                });
+            }
+
+            if (incidentForm) {
+                incidentForm.addEventListener('submit', async (event) => {
+                    event.preventDefault(); // Prevent default form submission
+
+                    const incidentType = incidentForm.querySelector('#incidentType').value;
+                    const incidentDate = incidentForm.querySelector('#incidentDate').value;
+                    const incidentTime = incidentForm.querySelector('#incidentTime').value;
+                    const location = incidentForm.querySelector('#location').value;
+                    const description = incidentForm.querySelector('#description').value;
+                    const contactName = incidentForm.querySelector('#contactName').value || 'Community Member';
+                    const contactEmail = incidentForm.querySelector('#contactEmail').value;
+                    const contactPhone = incidentForm.querySelector('#contactPhone').value;
+                    const latitude = latitudeInput.value; // Get captured latitude
+                    const longitude = longitudeInput.value; // Get captured longitude
+
+                    // Prepare data for EmailJS (includes new fields)
+                    const emailJsParams = {
+                        incidentType: incidentType,
+                        incidentDate: incidentDate,
+                        incidentTime: incidentTime,
+                        location: location,
+                        description: description,
+                        contactName: contactName,
+                        contactEmail: contactEmail,
+                        contactPhone: contactPhone,
+                        latitude: latitude,    // Add latitude to email template
+                        longitude: longitude   // Add longitude to email template
+                    };
+
+                    // Ensure Firebase is initialized and user is authenticated for Firestore saving
+                    const userId = window.getCurrentUserId();
+                    if (!window.firebaseDb || !userId) {
+                        console.error("Firebase not initialized or user not authenticated. Cannot save incident to Firestore.");
+                        // Inform user via a modal/message if Firestore saving is critical
+                    } else {
+                        try {
+                            // Save incident to Firestore (includes new fields)
+                            const incidentsCollectionRef = collection(window.firebaseDb, `artifacts/${window.firebaseApp.options.appId}/users/${userId}/incidents`);
+                            await addDoc(incidentsCollectionRef, {
+                                incidentType,
+                                incidentDate,
+                                incidentTime,
+                                location,
+                                description,
+                                contactName,
+                                contactEmail,
+                                contactPhone,
+                                latitude: latitude || null, // Store as null if not captured
+                                longitude: longitude || null, // Store as null if not captured
+                                timestamp: new Date() // Add a server timestamp
+                            });
+                            console.log("Incident saved to Firestore successfully!");
+                        } catch (error) {
+                            console.error("Error adding document to Firestore: ", error);
+                            // Do not return, attempt EmailJS submission even if Firestore failed
+                        }
+                    }
+
+                    // Attempt to send email via EmailJS
+                    try {
+                        // Use emailjs.send() to pass the parameters object
+                        await emailjs.send("service_oxovdtj", "template_n2oj8hn", emailJsParams);
+                        console.log("Email sent via EmailJS successfully!");
+
+                        // Populate and display confirmation message
+                        document.getElementById('confName').textContent = contactName;
+                        document.getElementById('confIncidentType').textContent = incidentType;
+                        document.getElementById('confLocation').textContent = location;
+                        document.getElementById('confIncidentDate').textContent = incidentDate;
+                        document.getElementById('confIncidentTime').textContent = incidentTime;
+                        document.getElementById('confLiveLocation').textContent = (latitude && longitude) ? `Lat: ${latitude}, Lon: ${longitude}` : 'N/A';
+
+
+                        confirmationMessageDiv.innerHTML = `
+                            <h3>Incident Report Submitted Successfully!</h3>
+                            <p>Dear ${contactName},</p>
+                            <p>Thank you for submitting your incident report to Community Safety SA. We have received your submission with the following details:</p>
+                            <ul>
+                                <li><strong>Incident Type:</strong> ${incidentType}</li>
+                                <li><strong>Location:</strong> ${location || 'Not provided'}</li>
+                                <li><strong>Live Coordinates:</strong> ${(latitude && longitude) ? `Lat: ${latitude}, Lon: ${longitude}` : 'N/A'}</li>
+                                <li><strong>Date of Incident:</strong> ${incidentDate}</li>
+                                <li><strong>Time of Incident:</strong> ${incidentTime || 'Not provided'}</li>
+                            </ul>
+                            <p>We appreciate your contribution to a safer community. A confirmation email has been sent to you if you provided your email address.</p>
+                            <p>Sincerely,</p>
+                            <p>The Community Safety SA Team</p>
+                        `;
+                        confirmationMessageDiv.style.display = 'block';
+                        incidentForm.reset(); // Clear form fields
+                        // Clear location inputs as well after successful submission
+                        latitudeInput.value = '';
+                        longitudeInput.value = '';
+                        locationStatus.textContent = 'Click the button to get your current coordinates.';
+                        locationStatus.className = 'location-info'; // Reset class
+                        confirmationMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    } catch (emailError) {
+                        console.error("Failed to send email via EmailJS: ", emailError);
+                        // If EmailJS fails, still show a success message if Firestore worked, or a general error if both failed
+                        confirmationMessageDiv.innerHTML = `<h3>Submission Partially Successful / Error!</h3><p style="color:red;">Your report was submitted (data saved to our records), but there was an issue sending the confirmation email. Error: ${emailError.message}</p>`;
+                        if (!window.firebaseDb || !userId) { // If Firebase also failed
+                           confirmationMessageDiv.innerHTML = `<h3>Error!</h3><p style="color:red;">Failed to submit report. Neither data storage nor email sending was successful. Please check your internet connection or try again later. Error: ${emailError.message}</p>`;
+                        }
+                        confirmationMessageDiv.style.display = 'block';
+                        confirmationMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+
+            // General page logic for nav highlighting and section animations
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
+                    link.classList.add('active');
+                }
+            });
+
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>

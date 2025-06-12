@@ -1,0 +1,502 @@
+
+
+           <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Safety SA - Home</title>
+    <style>
+        /* CSS EMBEDDED DIRECTLY HERE */
+        :root {
+            --primary-color: #28a745; /* Green */
+            --secondary-color: #007bff; /* Blue */
+            --accent-color: #dc3545; /* Red */
+            --text-color: #333;
+            --light-bg: #f4f7f6;
+            --white-bg: #ffffff;
+            --border-color: #ddd;
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll on smaller screens */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap; /* Allow navigation items to wrap on small screens */
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #e6e6e6;
+            border-bottom: 2px solid white;
+        }
+
+        /* Admin link styling - visible for demo, hide in real app */
+        .admin-link {
+            /* display: none; */ /* Uncomment this in a real application for production */
+        }
+
+        #hero {
+            background: url('https://placehold.co/1500x600/28a745/ffffff?text=Community+Safety+SA') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px; /* Rounded corners for the hero section */
+            margin-bottom: 20px;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInSlideUp 1s forwards ease-out;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-content p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--white-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-content {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        section.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            background-color: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .feature-item h3 {
+            color: var(--secondary-color);
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .feature-item p {
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        /* Quick Links Section */
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .quick-link-item {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .quick-link-item:hover {
+            background-color: #218838;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+            }
+            nav ul li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li a {
+                display: block;
+                padding: 10px 0;
+            }
+            #hero {
+                padding: 80px 15px;
+            }
+            .hero-content h1 {
+                font-size: 2.2em;
+            }
+            .hero-content p {
+                font-size: 1em;
+            }
+            .btn {
+                display: block;
+                width: calc(100% - 20px);
+                box-sizing: border-box;
+                margin: 10px auto;
+            }
+            main {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            section h2 {
+                font-size: 1.6em;
+            }
+            .feature-grid, .quick-links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // Initialize Firebase
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Sign in anonymously or with custom token
+            if (typeof __initial_auth_token !== 'undefined') {
+                signInWithCustomToken(auth, __initial_auth_token).catch((error) => {
+                    console.error("Error signing in with custom token:", error);
+                    // Fallback to anonymous sign-in if custom token fails
+                    signInAnonymously(auth).catch(anonError => console.error("Anonymous sign-in failed:", anonError));
+                });
+            } else {
+                signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
+            }
+
+            // Listen for auth state changes
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    console.log("Firebase user ID:", currentUserId);
+                } else {
+                    currentUserId = null;
+                    console.log("No Firebase user is signed in.");
+                }
+            });
+        } else {
+            console.warn("Firebase config not found. Firebase features will not be available on this page.");
+        }
+
+        // Make app, db, auth, and currentUserId available globally if needed by other scripts
+        window.firebaseApp = app;
+        window.firebaseDb = db;
+        window.firebaseAuth = auth;
+        window.getCurrentUserId = () => currentUserId; // Function to get current user ID
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Community Safety SA</div>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="report-incident.html">Report Incident</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="news.html">News</a></li>
+                <li class="admin-link"><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="hero">
+        <div class="hero-content">
+            <h1>Your Safety, Our Priority. Together, We Build Safer Communities.</h1>
+            <p>Empowering South African communities with essential safety resources, incident reporting, and the latest news on crime prevention initiatives.</p>
+            <a href="report-incident.html" class="btn btn-primary">Report an Incident</a>
+            <a href="resources.html" class="btn btn-secondary">Access Resources</a>
+        </div>
+    </div>
+
+    <main>
+        <section id="welcome" class="animate-in page-content">
+            <h2>Welcome to Community Safety SA</h2>
+            <p>Community Safety SA is dedicated to fostering a secure environment for all South Africans. We believe that a safer community begins with informed citizens and collaborative action. Our platform provides tools and information to help you contribute to and benefit from local safety efforts.</p>
+        </section>
+
+        <section id="features" class="animate-in page-content">
+            <h2>Our Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>Incident Reporting</h3>
+                    <p>Easily report non-urgent incidents, suspicious activities, or community safety concerns directly through our online form.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Safety Resources</h3>
+                    <p>Access a comprehensive library of safety tips, emergency contact numbers, and crime prevention guidelines.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Latest News</h3>
+                    <p>Stay updated with current news on local safety initiatives, community policing successes, and crime trends across South Africa.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Community Engagement</h3>
+                    <p>Learn how you can get involved with neighborhood watches and local crime prevention forums.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="quick-links" class="animate-in page-content">
+            <h2>Quick Links</h2>
+            <div class="quick-links-grid">
+                <a href="report-incident.html" class="quick-link-item">Report Now</a>
+                <a href="resources.html" class="quick-link-item">Get Safety Tips</a>
+                <a href="news.html" class="quick-link-item">Read Latest News</a>
+                <a href="about.html" class="quick-link-item">About Us</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Community Safety SA. All rights reserved.</p>
+        <p>For emergencies, dial 10111 (SAPS) or 10177 (Ambulance/Fire).</p>
+    </footer>
+
+    <script>
+        /* Main JavaScript for animations and nav highlighting */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Highlight active navigation link
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
+                    link.classList.add('active');
+                }
+            });
+
+            // Section animation observer
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

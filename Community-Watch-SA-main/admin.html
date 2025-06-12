@@ -91,9 +91,9 @@
 
         /* Admin link should typically be protected in a real app */
         /* .admin-link {
-            For demonstration, it's visible. In a real app,
-               this would be dynamically shown/hidden based on authentication.
-            display: none;  Uncomment this in a real application 
+             For demonstration, it's visible. In a real app,
+                this would be dynamically shown/hidden based on authentication.
+             display: none;  Uncomment this in a real application
         } */
 
 
@@ -164,6 +164,99 @@
         .incidents-table .optional-info {
             font-size: 0.85em;
             color: #666;
+        }
+
+        /* Message for no incidents */
+        .no-incidents-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        /* Login Form Styles */
+        .admin-login-container {
+            background-color: var(--white-bg);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 450px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .admin-login-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 2.2em;
+        }
+
+        .admin-login-container .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .admin-login-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 1.1em;
+        }
+
+        .admin-login-container input[type="email"],
+        .admin-login-container input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .admin-login-container input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        .admin-login-container button.btn-primary {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.2em;
+            margin-top: 25px;
+        }
+
+        .admin-login-error {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        /* Logout button style */
+        #logoutButton {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+        }
+        #logoutButton:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         /* Footer (shared styles) */
@@ -239,6 +332,14 @@
                 text-align: left;
                 color: var(--primary-color);
             }
+            .admin-login-container {
+                padding: 30px;
+                margin: 30px auto;
+                max-width: 90%;
+            }
+            .admin-login-container h2 {
+                font-size: 1.8em;
+            }
         }
     </style>
 </head>
@@ -253,33 +354,63 @@
                 <li><a href="news.html">News</a></li>
                 <li class="admin-link"><a href="admin.html" class="active">Admin</a></li>
                 <li><a href="about.html">About Us</a></li>
+                <li><a href="user-login.html">Login / Register</a></li>
             </ul>
         </nav>
     </header>
 
     <main class="page-content">
-        <h1>Admin Dashboard</h1>
-        <p>Overview of reported incidents and community safety data.</p>
+        <div id="adminLogin" class="admin-login-container">
+            <h2>Admin Login</h2>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminEmail">Email:</label>
+                    <input type="email" id="adminEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password:</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <p id="loginError" class="admin-login-error" style="display: none;"></p>
+            </form>
+            <p class="form-note">
+                <br>
+                **Default Login:**<br>
+                Email: `admin@example.com`<br>
+                Password: `password123`
+            </p>
+        </div>
 
-        <section id="reported-incidents">
-            <h2>Reported Incidents (Simulated)</h2>
-            <table class="incidents-table">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Description</th>
-                        <th>Contact</th>
-                    </tr>
-                </thead>
-                <tbody id="incidentsTableBody">
-                    <!-- Incidents will be loaded here by JavaScript -->
-                </tbody>
-            </table>
-            <p class="form-note"><em>Note: This data is simulated and not stored persistently. In a real system, incidents would be stored in a database.</em></p>
-        </section>
+        <div id="adminDashboardContent" style="display: none;">
+            <h1 style="display: inline-block;">Admin Dashboard</h1>
+            <button id="logoutButton" class="btn-primary">Logout</button>
+            <p>Overview of reported incidents and community safety data.</p>
+
+            <section id="reported-incidents">
+                <h2>Reported Incidents (Local Storage)</h2>
+                <table class="incidents-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Description</th>
+                            <th>Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incidentsTableBody">
+                        <!-- Incidents will be loaded here by JavaScript -->
+                    </tbody>
+                </table>
+                <div id="noIncidentsMessage" class="no-incidents-message" style="display: none;">
+                    <p>No incidents have been reported yet in this browser's local storage.</p>
+                    <p>Go to the <a href="report-incident.html">Report Incident</a> page to submit one!</p>
+                </div>
+                <p class="form-note"><em>Note: This data is loaded from your browser's local storage and is not stored persistently on a server.</em></p>
+            </section>
+        </div>
     </main>
 
     <footer>
@@ -288,74 +419,118 @@
     </footer>
 
     <script>
-        /* JAVASCRIPT EMBEDDED DIRECTLY HERE */
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Admin Dashboard Loaded!');
-
-            // Simulated incident data (replace with real data from a backend in a live app)
-            const simulatedIncidents = [
-                {
-                    type: "",
-                    date: "",
-                    time: "14:30",
-                    location: "Main Street & Oak Ave",
-                    description: "Unfamiliar vehicle parked for extended periods, occupants observing properties.",
-                    contact: "john.doe@example.com"
-                },
-                {
-                    type: "Vandalism",
-                    date: "2025-06-07",
-                    time: "03:00",
-                    location: "Community Park Playground",
-                    description: "Swings broken, graffiti on slide.",
-                    contact: "jane.smith@example.com"
-                },
-                {
-                    type: "Noise Complaint",
-                    date: "2025-06-06",
-                    time: "23:45",
-                    location: "Apartment Building 123, Unit 5",
-                    description: "Loud music late into the night.",
-                    contact: "anonymous@example.com"
-                },
-                {
-                    type: "Loitering",
-                    date: "2025-06-05",
-                    time: "19:00",
-                    location: "Near local convenience store",
-                    description: "Group of individuals regularly gathering, intimidating customers.",
-                    contact: "" // No contact provided
-                },
-                {
-                    type: "Other",
-                    date: "2025-06-04",
-                    time: "10:15",
-                    location: "Public Library",
-                    description: "Disruptive behavior inside the library, staff feeling unsafe.",
-                    contact: "library.manager@example.com"
-                }
-            ];
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const adminEmailInput = document.getElementById('adminEmail');
+            const adminPasswordInput = document.getElementById('adminPassword');
+            const loginErrorDiv = document.getElementById('loginError');
+            const adminLoginContainer = document.getElementById('adminLogin');
+            const adminDashboardContent = document.getElementById('adminDashboardContent');
+            const logoutButton = document.getElementById('logoutButton');
 
             const incidentsTableBody = document.getElementById('incidentsTableBody');
+            const noIncidentsMessage = document.getElementById('noIncidentsMessage');
 
-            // Function to render incidents into the table
-            function renderIncidents() {
+            // --- Default Admin Credentials (for demonstration only, NOT secure) ---
+            const ADMIN_EMAIL = 'admin@example.com';
+            const ADMIN_PASSWORD = 'password123';
+
+            /**
+             * Checks the login status from localStorage and updates UI accordingly.
+             */
+            function checkLoginStatus() {
+                const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+
+                if (loggedIn) {
+                    adminLoginContainer.style.display = 'none';
+                    adminDashboardContent.style.display = 'block';
+                    loadAndRenderIncidents(); // Load data only when logged in
+                } else {
+                    adminLoginContainer.style.display = 'block';
+                    adminDashboardContent.style.display = 'none';
+                    adminLoginForm.reset(); // Clear form on logout
+                    loginErrorDiv.style.display = 'none'; // Hide errors
+                }
+            }
+
+            /**
+             * Handles the admin login form submission.
+             */
+            adminLoginForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const email = adminEmailInput.value;
+                const password = adminPasswordInput.value;
+
+                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    checkLoginStatus();
+                } else {
+                    loginErrorDiv.textContent = 'Invalid email or password.';
+                    loginErrorDiv.style.display = 'block';
+                }
+            });
+
+            /**
+             * Handles the admin logout.
+             */
+            logoutButton.addEventListener('click', () => {
+                localStorage.removeItem('adminLoggedIn');
+                checkLoginStatus();
+            });
+
+            /**
+             * Fetches incident data from localStorage and renders it into the table.
+             */
+            function loadAndRenderIncidents() {
                 incidentsTableBody.innerHTML = ''; // Clear existing rows
-                simulatedIncidents.forEach(incident => {
+                noIncidentsMessage.style.display = 'none'; // Hide message by default
+
+                const storedIncidentsJSON = localStorage.getItem('communitySafetyIncidents');
+                let incidents = [];
+
+                if (storedIncidentsJSON) {
+                    try {
+                        incidents = JSON.parse(storedIncidentsJSON);
+                        if (!Array.isArray(incidents)) {
+                            console.error("Data in localStorage is not an array for incidents. Resetting.");
+                            incidents = []; // Reset if not an array
+                        }
+                    } catch (e) {
+                        console.error("Error parsing incidents from localStorage:", e);
+                        incidents = []; // Reset if parsing fails
+                    }
+                }
+
+                if (incidents.length === 0) {
+                    noIncidentsMessage.style.display = 'block'; // Show message if no incidents
+                    return;
+                }
+
+                // Sort incidents by timestamp or date (most recent first)
+                incidents.sort((a, b) => {
+                    const dateA = a.timestamp ? new Date(a.timestamp) : new Date(a.date);
+                    const dateB = b.timestamp ? new Date(b.timestamp) : new Date(b.date);
+                    return dateB.getTime() - dateA.getTime(); // Descending order (most recent first)
+                });
+
+
+                incidents.forEach(incident => {
                     const row = document.createElement('tr');
+                    // Use data-label for responsive table headers on small screens
                     row.innerHTML = `
-                        <td data-label="Type">${incident.type}</td>
-                        <td data-label="Date">${incident.date}</td>
-                        <td data-label="Time">${incident.time}</td>
-                        <td data-label="Location">${incident.location}</td>
-                        <td data-label="Description">${incident.description}</td>
-                        <td data-label="Contact">${incident.contact || '<span class="optional-info">N/A</span>'}</td>
+                        <td data-label="Type">${incident.type || 'N/A'}</td>
+                        <td data-label="Date">${incident.date || 'N/A'}</td>
+                        <td data-label="Time">${incident.time || 'N/A'}</td>
+                        <td data-label="Location">${incident.location || 'N/A'}</td>
+                        <td data-label="Description">${incident.description || 'N/A'}</td>
+                        <td data-label="Contact">${incident.contactName || incident.contactEmail || incident.contactPhone || '<span class="optional-info">N/A</span>'}</td>
                     `;
                     incidentsTableBody.appendChild(row);
                 });
             }
 
-            renderIncidents(); // Call on page load
+            // Call checkLoginStatus on initial page load
+            checkLoginStatus();
 
             // Highlight active navigation link
             const currentPath = window.location.pathname.split('/').pop();
@@ -369,7 +544,7 @@
                 }
             });
 
-            // Section animation observer (copied from other pages for consistency, though less relevant here)
+            // Section animation observer (for general consistency across pages)
             const sections = document.querySelectorAll('section');
             const observerOptions = {
                 root: null,

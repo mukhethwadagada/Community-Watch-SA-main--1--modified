@@ -14,7 +14,7 @@
             --light-bg: #f4f7f6;
             --white-bg: #ffffff;
             --border-color: #ddd;
-            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;         
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -129,6 +129,21 @@
             background-color: #218838;
         }
 
+        .btn-info { /* New style for escalate button */
+            background-color: #17a2b8;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .btn-warning { /* New style for set due date button */
+            background-color: #ffc107;
+            color: #333; /* Darker text for visibility */
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
         main {
             max-width: 1200px;
             margin: 20px auto;
@@ -199,6 +214,16 @@
             color: #28a745; /* Green */
             font-weight: bold;
         }
+        /* New: Style for Overdue Status */
+        .status-overdue {
+            color: white;
+            background-color: #dc3545; /* Red background */
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block; /* To apply padding/background */
+        }
+
 
         #noIncidentsMessage {
             text-align: center;
@@ -216,7 +241,34 @@
             flex-wrap: wrap; /* Allow wrapping on small screens */
             justify-content: flex-end; /* Align buttons to the right */
         }
-        
+
+        /* Search filter styles */
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: flex-start; /* Align search filter to the left */
+        }
+        .filter-controls label {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .filter-controls input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .filter-controls input[type="date"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            outline: none;
+        }
+
         footer {
             background-color: var(--text-color);
             color: white;
@@ -333,18 +385,27 @@
             section h2 {
                 font-size: 1.6em;
             }
-            .admin-controls {
+            .admin-controls, .filter-controls {
                 justify-content: center; /* Center buttons on small screens */
             }
-            .admin-controls .btn {
+            .admin-controls .btn, .filter-controls .btn {
                 width: 100%; /* Full width buttons */
             }
             #loginContainer {
                 padding: 20px;
             }
+            #incidentsTable th, #incidentsTable td {
+                padding: 8px; /* Reduce padding for smaller screens */
+                font-size: 0.9em;
+            }
+            #incidentsTable td .action-buttons {
+                flex-direction: row; /* Keep buttons horizontal on small screens if space allows */
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
 
-        /* New styles for improved button layout within table cells */
+        /* Styles for improved button layout within table cells */
         #incidentsTable td .action-buttons {
             display: flex;
             flex-direction: column; /* Stack buttons vertically */
@@ -388,10 +449,15 @@
         <div id="dashboardContent">
             <h1>Admin Dashboard (Local Incidents)</h1>
             <p>This page displays incident reports saved **locally in your browser's storage**. It will only show incidents reported from this specific browser and device.</p>
-            <p class="form-note"><em>For a centralized database of all incidents, a server-side solution would be required.</em></p>
+            <p class="form-note"><em>For a centralized database of all incidents, a server-side solution (like Firebase Firestore) would be required.</em></p>
 
             <section id="incidentReports">
                 <h2>Incident Reports</h2>
+                <div class="filter-controls">
+                    <label for="filterDate">Filter by Incident Date:</label>
+                    <input type="date" id="filterDate">
+                    <button id="clearFilterBtn" class="btn btn-secondary btn-small">Clear Filter</button>
+                </div>
                 <div class="admin-controls">
                     <button id="downloadCsvBtn" class="btn btn-secondary">Download as CSV</button>
                     <button id="clearIncidentsBtn" class="btn btn-danger">Clear All Local Incidents</button>
@@ -404,17 +470,16 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Type</th>
-                                <th>Date</th>
-                                <th>Time</th>
+                                <th>Incident Date</th>
+                                <th>Incident Time</th>
                                 <th>Location</th>
                                 <th>Lat/Lon</th>
                                 <th>Description</th>
                                 <th>Reporter Name</th>
                                 <th>Reporter Email</th>
                                 <th>Reporter Phone</th>
-                                <th>Timestamp</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>Reported At</th>
+                                <th>Due Date</th> <th>Status</th> <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -445,11 +510,16 @@
             const noIncidentsMessage = document.getElementById('noIncidentsMessage');
             const clearIncidentsBtn = document.getElementById('clearIncidentsBtn');
             const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+            const filterDateInput = document.getElementById('filterDate');
+            const clearFilterBtn = document.getElementById('clearFilterBtn');
 
             // --- Simple Client-Side Authentication ---
             const ADMIN_USERNAME = 'admin';
             const ADMIN_PASSWORD = 'password123'; 
             const SESSION_KEY = 'adminLoggedIn';
+
+            // --- Admin Email for Escalation ---
+            const ADMIN_ESCALATION_EMAIL = 'admin@communitysafety.org'; // Replace with your actual admin email
 
             function showDashboard() {
                 loginContainer.style.display = 'none';
@@ -510,18 +580,32 @@
                 incidentsTableBody.innerHTML = ''; // Clear existing table rows
                 let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
 
-                // Ensure all incidents have a status
+                // Ensure all incidents have a status and a due date field
                 incidents = incidents.map(incident => {
                     if (!incident.status) {
                         incident.status = 'Pending';
                     }
+                    if (!incident.dueDate) { // Initialize dueDate if not present
+                        incident.dueDate = ''; 
+                    }
                     return incident;
                 });
                 
-                localStorage.setItem('incidents', JSON.stringify(incidents)); // Save updated incidents back
+                // Save updated incidents back (in case statuses or due dates were added)
+                localStorage.setItem('incidents', JSON.stringify(incidents)); 
 
-                if (incidents.length === 0) {
+                // Apply filter if a date is selected
+                const filterDate = filterDateInput.value;
+                let filteredIncidents = incidents;
+                if (filterDate) {
+                    filteredIncidents = incidents.filter(incident => {
+                        return incident.incidentDate === filterDate;
+                    });
+                }
+
+                if (filteredIncidents.length === 0) {
                     noIncidentsMessage.style.display = 'block';
+                    noIncidentsMessage.textContent = filterDate ? `No incidents found for ${filterDate}.` : 'No incident reports found in local storage.';
                     document.getElementById('incidentsTableContainer').style.display = 'none';
                     clearIncidentsBtn.style.display = 'none'; // Hide clear button if no incidents
                     downloadCsvBtn.style.display = 'none'; // Hide download button if no incidents
@@ -534,9 +618,21 @@
                 downloadCsvBtn.style.display = 'inline-block'; // Show download button
 
 
-                incidents.forEach((incident, index) => {
+                // Get today's date for overdue calculation (normalize to YYYY-MM-DD for comparison)
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); 
+
+                filteredIncidents.forEach((incident, index) => {
+                    // Find the original index to update/delete correctly
+                    const originalIndex = incidents.findIndex(item => 
+                        item.incidentType === incident.incidentType && 
+                        item.incidentDate === incident.incidentDate &&
+                        item.description === incident.description &&
+                        item.reportedAt === incident.reportedAt // Use a unique identifier if available
+                    );
+
                     const row = incidentsTableBody.insertRow();
-                    row.insertCell().textContent = index + 1; // ID
+                    row.insertCell().textContent = originalIndex + 1; // Display 1-based ID for table
                     row.insertCell().textContent = incident.incidentType || 'N/A';
                     row.insertCell().textContent = incident.incidentDate || 'N/A';
                     row.insertCell().textContent = incident.incidentTime || 'N/A';
@@ -546,12 +642,33 @@
                     row.insertCell().textContent = incident.contactName || 'Anonymous';
                     row.insertCell().textContent = incident.contactEmail || 'N/A';
                     row.insertCell().textContent = incident.contactPhone || 'N/A';
-                    row.insertCell().textContent = incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A';
+                    row.insertCell().textContent = incident.reportedAt ? new Date(incident.reportedAt).toLocaleString() : 'N/A';
                     
-                    // Status Cell
+                    // NEW: Due Date Cell
+                    row.insertCell().textContent = incident.dueDate || 'Not set';
+
+                    // NEW & MODIFIED: Status Cell - Calculate display status
                     const statusCell = row.insertCell();
-                    statusCell.textContent = incident.status;
-                    statusCell.classList.add(incident.status === 'Resolved' ? 'status-resolved' : 'status-pending');
+                    let displayStatus = incident.status;
+                    let statusClass = '';
+
+                    if (incident.status === 'Resolved') {
+                        statusClass = 'status-resolved';
+                    } else if (incident.dueDate) {
+                        const dueDateObj = new Date(incident.dueDate);
+                        dueDateObj.setHours(0, 0, 0, 0); // Normalize due date to start of day
+                        if (dueDateObj < today) {
+                            displayStatus = 'Overdue';
+                            statusClass = 'status-overdue';
+                        } else {
+                            statusClass = 'status-pending';
+                        }
+                    } else {
+                        statusClass = 'status-pending';
+                    }
+
+                    statusCell.textContent = displayStatus;
+                    statusCell.classList.add(statusClass);
 
                     // Actions Cell
                     const actionsCell = row.insertCell();
@@ -562,7 +679,7 @@
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'Delete';
                     deleteButton.classList.add('btn', 'btn-danger', 'btn-small');
-                    deleteButton.dataset.index = index; // Store the index of the incident
+                    deleteButton.dataset.originalIndex = originalIndex; // Use original index
                     deleteButton.addEventListener('click', handleDeleteIncident);
                     actionButtonsDiv.appendChild(deleteButton);
 
@@ -570,9 +687,32 @@
                     const toggleStatusButton = document.createElement('button');
                     toggleStatusButton.textContent = incident.status === 'Resolved' ? 'Mark Pending' : 'Mark Resolved';
                     toggleStatusButton.classList.add('btn', incident.status === 'Resolved' ? 'btn-secondary' : 'btn-success', 'btn-small');
-                    toggleStatusButton.dataset.index = index; // Store the index
+                    toggleStatusButton.dataset.originalIndex = originalIndex; // Use original index
                     toggleStatusButton.addEventListener('click', handleMarkStatus);
                     actionButtonsDiv.appendChild(toggleStatusButton);
+
+                    // NEW: Set Due Date Button
+                    const setDueDateButton = document.createElement('button');
+                    setDueDateButton.textContent = 'Set Due Date';
+                    setDueDateButton.classList.add('btn', 'btn-warning', 'btn-small');
+                    setDueDateButton.dataset.originalIndex = originalIndex;
+                    setDueDateButton.addEventListener('click', handleSetDueDate);
+                    actionButtonsDiv.appendChild(setDueDateButton);
+
+                    // Escalate Button
+                    const escalateButton = document.createElement('button');
+                    escalateButton.textContent = 'Escalate';
+                    escalateButton.classList.add('btn', 'btn-info', 'btn-small');
+                    escalateButton.dataset.incidentType = incident.incidentType || 'N/A';
+                    escalateButton.dataset.incidentDate = incident.incidentDate || 'N/A';
+                    escalateButton.dataset.location = incident.location || 'N/A';
+                    escalateButton.dataset.description = incident.description || 'N/A';
+                    escalateButton.dataset.reporterName = incident.contactName || 'Anonymous';
+                    escalateButton.dataset.reporterEmail = incident.contactEmail || 'N/A';
+                    escalateButton.dataset.status = displayStatus; // Use the calculated display status
+                    escalateButton.dataset.originalIndex = originalIndex; // Pass index for reference
+                    escalateButton.addEventListener('click', handleEscalateIncident);
+                    actionButtonsDiv.appendChild(escalateButton);
 
                     actionsCell.appendChild(actionButtonsDiv);
                 });
@@ -580,17 +720,17 @@
 
             // Function to handle toggling incident status
             function handleMarkStatus(event) {
-                const indexToUpdate = parseInt(event.target.dataset.index);
+                const originalIndexToUpdate = parseInt(event.target.dataset.originalIndex);
                 let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
 
-                if (indexToUpdate >= 0 && indexToUpdate < incidents.length) {
-                    const currentStatus = incidents[indexToUpdate].status;
+                if (originalIndexToUpdate >= 0 && originalIndexToUpdate < incidents.length) {
+                    const currentStatus = incidents[originalIndexToUpdate].status; // Actual stored status
                     if (currentStatus === 'Resolved') {
-                        incidents[indexToUpdate].status = 'Pending';
-                        alert(`Incident ID ${indexToUpdate + 1} marked as Pending.`);
+                        incidents[originalIndexToUpdate].status = 'Pending';
+                        alert(`Incident ID ${originalIndexToUpdate + 1} marked as Pending.`);
                     } else {
-                        incidents[indexToUpdate].status = 'Resolved';
-                        alert(`Incident ID ${indexToUpdate + 1} marked as Resolved.`);
+                        incidents[originalIndexToUpdate].status = 'Resolved';
+                        alert(`Incident ID ${originalIndexToUpdate + 1} marked as Resolved.`);
                     }
                     localStorage.setItem('incidents', JSON.stringify(incidents));
                     loadIncidents(); // Reload table to reflect status change
@@ -601,22 +741,98 @@
 
             // Function to handle deleting a specific incident
             function handleDeleteIncident(event) {
-                const indexToDelete = parseInt(event.target.dataset.index); // Get the index from the button's data attribute
+                const originalIndexToDelete = parseInt(event.target.dataset.originalIndex); // Get the original index
 
-                if (confirm(`Are you sure you want to delete incident ID ${indexToDelete + 1}? This action cannot be undone.`)) {
+                if (confirm(`Are you sure you want to delete incident ID ${originalIndexToDelete + 1}? This action cannot be undone.`)) {
                     let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
                     
-                    // Remove the incident at the specified index
-                    if (indexToDelete >= 0 && indexToDelete < incidents.length) {
-                        incidents.splice(indexToDelete, 1); // Remove 1 element at indexToDelete
+                    // Remove the incident at the specified original index
+                    if (originalIndexToDelete >= 0 && originalIndexToDelete < incidents.length) {
+                        incidents.splice(originalIndexToDelete, 1); // Remove 1 element at originalIndexToDelete
                         localStorage.setItem('incidents', JSON.stringify(incidents)); // Save updated array
                         loadIncidents(); // Reload the table to reflect changes
-                        alert(`Incident ID ${indexToDelete + 1} has been deleted.`);
+                        alert(`Incident ID ${originalIndexToDelete + 1} has been deleted.`);
                     } else {
                         alert('Error: Incident not found.'); 
                     }
                 }
             }
+
+            // NEW: Function to handle setting the due date
+            function handleSetDueDate(event) {
+                const originalIndexToUpdate = parseInt(event.target.dataset.originalIndex);
+                let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
+
+                if (originalIndexToUpdate >= 0 && originalIndexToUpdate < incidents.length) {
+                    // Prompt for a date. In a real app, you'd use a proper date picker UI.
+                    let newDueDate = prompt(`Enter new due date for Incident ID ${originalIndexToUpdate + 1} (YYYY-MM-DD):`, incidents[originalIndexToUpdate].dueDate || '');
+
+                    if (newDueDate === null) { // User cancelled the prompt
+                        return;
+                    }
+
+                    // Basic date validation (YYYY-MM-DD format check)
+                    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                    if (newDueDate !== '' && !dateRegex.test(newDueDate)) {
+                        alert('Invalid date format. Please use YYYY-MM-DD.');
+                        return;
+                    }
+
+                    incidents[originalIndexToUpdate].dueDate = newDueDate;
+                    localStorage.setItem('incidents', JSON.stringify(incidents));
+                    loadIncidents(); // Reload table to reflect due date change and potential overdue status
+                    alert(`Due date for Incident ID ${originalIndexToUpdate + 1} set to: ${newDueDate || 'Not set'}.`);
+                } else {
+                    alert('Error: Incident not found for due date update.');
+                }
+            }
+
+            // Function to handle escalating an incident
+            function handleEscalateIncident(event) {
+                const incidentType = event.target.dataset.incidentType;
+                const incidentDate = event.target.dataset.incidentDate;
+                const location = event.target.dataset.location;
+                const description = event.target.dataset.description;
+                const reporterName = event.target.dataset.reporterName;
+                const reporterEmail = event.target.dataset.reporterEmail;
+                const status = event.target.dataset.status; // Use the displayed status (could be 'Overdue')
+                const originalIndex = parseInt(event.target.dataset.originalIndex) + 1; // For display ID
+
+                const subject = encodeURIComponent(`URGENT: Incident Escalation - ${incidentType} at ${location} (ID: ${originalIndex}) - Status: ${status}`);
+                
+                const body = encodeURIComponent(`
+Incident Escalation Report:
+
+---
+Incident Details:
+ID: ${originalIndex}
+Type: ${incidentType}
+Incident Date: ${incidentDate}
+Location: ${location}
+Description: ${description}
+Current Status: ${status}
+
+---
+Reporter Details:
+Name: ${reporterName}
+Email: ${reporterEmail}
+
+---
+Action Required: Please review this incident immediately.
+`);
+
+                // Create a mailto link
+                const mailtoLink = `mailto:${ADMIN_ESCALATION_EMAIL}?subject=${subject}&body=${body}`;
+
+                // Open the user's default email client
+                window.location.href = mailtoLink;
+
+                alert('Opening your email client to send the escalation. Please review and send the email.');
+                // In a real application, you might want to update the incident status to 'Escalated' here.
+                // For a local storage demo, this would require finding and updating the incident.
+                // If you were using Firestore, you would update the document directly after triggering the email.
+            }
+
 
             // Clear All Incidents Button
             clearIncidentsBtn.addEventListener('click', () => {
@@ -636,30 +852,46 @@
                 }
 
                 const headers = [
-                    "ID", "Type", "Date", "Time", "Location", "Latitude", "Longitude",
-                    "Description", "Reporter Name", "Reporter Email", "Reporter Phone", "Timestamp", "Status"
+                    "ID", "Type", "Incident Date", "Incident Time", "Location", "Latitude", "Longitude",
+                    "Description", "Reporter Name", "Reporter Email", "Reporter Phone", "Reported At", "Due Date", "Status"
                 ];
 
                 const csvRows = [];
-                csvRows.push(headers.join(',')); // Add headers as the first row
+                csvRows.push(headers.map(header => `"${header.replace(/"/g, '""')}"`).join(',')); // Add headers, quoted
+
+                // Get today's date for overdue calculation (normalize to YYYY-MM-DD for comparison)
+                const todayForCsv = new Date();
+                todayForCsv.setHours(0, 0, 0, 0); 
 
                 incidents.forEach((incident, index) => {
+                    // Calculate displayed status for CSV
+                    let displayStatus = incident.status;
+                    if (incident.status !== 'Resolved' && incident.dueDate) {
+                        const dueDateObj = new Date(incident.dueDate);
+                        dueDateObj.setHours(0, 0, 0, 0); // Normalize due date to start of day
+                        if (dueDateObj < todayForCsv) {
+                            displayStatus = 'Overdue';
+                        }
+                    }
+
                     const values = [
-                        index + 1,
-                        `"${(incident.incidentType || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.incidentDate || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.incidentTime || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.location || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.latitude || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.longitude || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.description || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.contactName || 'Anonymous').replace(/"/g, '""')}"`,
-                        `"${(incident.contactEmail || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.contactPhone || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.status || 'N/A').replace(/"/g, '""')}"`
+                        index + 1, // Use original index for CSV ID
+                        incident.incidentType || 'N/A',
+                        incident.incidentDate || 'N/A',
+                        incident.incidentTime || 'N/A',
+                        incident.location || 'N/A',
+                        incident.latitude || 'N/A',
+                        incident.longitude || 'N/A',
+                        incident.description || 'N/A',
+                        incident.contactName || 'Anonymous',
+                        incident.contactEmail || 'N/A',
+                        incident.contactPhone || 'N/A',
+                        incident.reportedAt ? new Date(incident.reportedAt).toLocaleString() : 'N/A',
+                        incident.dueDate || 'Not set', // Include Due Date in CSV
+                        displayStatus // Include the calculated status in CSV
                     ];
-                    csvRows.push(values.join(','));
+                    // Quote all values to handle commas within fields
+                    csvRows.push(values.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','));
                 });
 
                 const csvString = csvRows.join('\n');
@@ -670,6 +902,29 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+            });
+
+            // Date Filter functionality
+            filterDateInput.addEventListener('change', () => {
+                loadIncidents(); // Reload incidents with the applied filter
+            });
+
+            // Clear Filter button
+            clearFilterBtn.addEventListener('click', () => {
+                filterDateInput.value = ''; // Clear the date input
+                loadIncidents(); // Reload incidents to show all
+            });
+
+            // Highlight active navigation link
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
+                    link.classList.add('active');
+                }
             });
         });
     </script>

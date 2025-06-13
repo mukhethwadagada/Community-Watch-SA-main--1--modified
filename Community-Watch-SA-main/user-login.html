@@ -413,7 +413,7 @@
                         const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
                         console.log("User registered:", userCredential.user);
                         // Redirect or show success message
-                        window.location.href = 'index.html'; // Redirect to home page
+                        window.location.href = 'user-login.html'; // Redirect to home page
                     } else {
                         // Sign in existing user
                         const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);

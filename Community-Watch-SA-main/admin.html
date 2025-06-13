@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Safety SA - Admin Dashboard</title>
     <style>
-        /* CSS EMBEDDED DIRECTLY HERE (Consistent with other pages, plus admin-specific styles) */
+        /* Re-using the CSS from your other pages for consistency */
         :root {
             --primary-color: #28a745;
             --secondary-color: #007bff;
@@ -14,7 +14,7 @@
             --light-bg: #f4f7f6;
             --white-bg: #ffffff;
             --border-color: #ddd;
-            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;         
         }
 
         body {
@@ -25,17 +25,6 @@
             color: var(--text-color);
             line-height: 1.6;
             overflow-x: hidden;
-        }
-
-        /* Specific background for the report page (for consistency, not used here) */
-        .report-page-body {
-            background-color: #e0f0e0;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
         }
 
         header {
@@ -88,14 +77,50 @@
             color: #e6e6e6;
             border-bottom: 2px solid white;
         }
+        
+        .admin-link {
+            /* Keep it visible for this demo. In a real app, you'd hide or protect this. */
+        }
 
-        /* Admin link should typically be protected in a real app */
-        /* .admin-link {
-             For demonstration, it's visible. In a real app,
-                this would be dynamically shown/hidden based on authentication.
-             display: none;  Uncomment this in a real application
-        } */
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
 
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
 
         main {
             max-width: 1200px;
@@ -106,20 +131,8 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .page-content {
-            padding: 20px;
-        }
-
         section {
             margin-bottom: 40px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-
-        section.animate-in {
-            opacity: 1;
-            transform: translateY(0);
         }
 
         section h2 {
@@ -130,136 +143,58 @@
             padding-bottom: 10px;
         }
 
-        /* Admin specific styles */
-        .incidents-table {
+        #incidentsTableContainer {
+            overflow-x: auto; /* Enable horizontal scrolling for tables on small screens */
+            margin-top: 20px;
+        }
+
+        #incidentsTable {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
 
-        .incidents-table th,
-        .incidents-table td {
+        #incidentsTable th, #incidentsTable td {
             border: 1px solid var(--border-color);
-            padding: 10px;
+            padding: 12px;
             text-align: left;
+            vertical-align: top; /* Align content to the top */
         }
 
-        .incidents-table th {
+        #incidentsTable th {
             background-color: var(--primary-color);
             color: white;
             font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.9em;
+            position: sticky; /* Make headers sticky for scrolling tables */
+            top: 0;
+            z-index: 1;
         }
 
-        .incidents-table tr:nth-child(even) {
-            background-color: var(--light-bg);
+        #incidentsTable tr:nth-child(even) {
+            background-color: #f8f8f8; /* Light stripe for readability */
         }
 
-        .incidents-table tr:hover {
-            background-color: #e9e9e9;
+        #incidentsTable tr:hover {
+            background-color: #e6f7ff; /* Hover effect */
         }
 
-        /* Small text for optional fields */
-        .incidents-table .optional-info {
-            font-size: 0.85em;
-            color: #666;
-        }
-
-        /* Message for no incidents */
-        .no-incidents-message {
+        #noIncidentsMessage {
             text-align: center;
             color: #666;
-            font-style: italic;
-            padding: 20px;
+            padding: 30px;
             border: 1px dashed var(--border-color);
             border-radius: 8px;
-            margin: 20px auto;
-            max-width: 600px;
-        }
-
-        /* Login Form Styles */
-        .admin-login-container {
-            background-color: var(--white-bg);
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 450px;
-            margin: 50px auto;
-            text-align: center;
-        }
-
-        .admin-login-container h2 {
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            font-size: 2.2em;
-        }
-
-        .admin-login-container .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .admin-login-container label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--text-color);
-            font-size: 1.1em;
-        }
-
-        .admin-login-container input[type="email"],
-        .admin-login-container input[type="password"] {
-            width: calc(100% - 22px);
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1em;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .admin-login-container input:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-            outline: none;
-        }
-
-        .admin-login-container button.btn-primary {
-            width: 100%;
-            padding: 14px;
-            font-size: 1.2em;
-            margin-top: 25px;
-        }
-
-        .admin-login-error {
-            color: var(--accent-color);
-            font-weight: bold;
-            margin-top: 15px;
-            font-size: 0.95em;
-        }
-
-        /* Logout button style */
-        #logoutButton {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
             margin-top: 20px;
-            border: none;
-            cursor: pointer;
-        }
-        #logoutButton:hover {
-            background-color: #c82333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        /* Footer (shared styles) */
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            justify-content: flex-end; /* Align buttons to the right */
+        }
+        
         footer {
             background-color: var(--text-color);
             color: white;
@@ -303,42 +238,11 @@
             section h2 {
                 font-size: 1.6em;
             }
-            .incidents-table, .incidents-table tbody, .incidents-table th, .incidents-table td, .incidents-table tr {
-                display: block;
+            .admin-controls {
+                justify-content: center; /* Center buttons on small screens */
             }
-            .incidents-table thead {
-                display: none; /* Hide table headers (but not important for screen readers) */
-            }
-            .incidents-table tr {
-                margin-bottom: 15px;
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                background-color: var(--white-bg);
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            }
-            .incidents-table td {
-                text-align: right;
-                padding-left: 50%;
-                position: relative;
-            }
-            .incidents-table td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                width: calc(50% - 20px);
-                padding-right: 10px;
-                white-space: nowrap;
-                font-weight: bold;
-                text-align: left;
-                color: var(--primary-color);
-            }
-            .admin-login-container {
-                padding: 30px;
-                margin: 30px auto;
-                max-width: 90%;
-            }
-            .admin-login-container h2 {
-                font-size: 1.8em;
+            .admin-controls .btn {
+                width: 100%; /* Full width buttons */
             }
         }
     </style>
@@ -350,7 +254,6 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="report-incident.html">Report Incident</a></li>
-                <li><a href="resources.html">Resources</a></li>
                 <li><a href="news.html">News</a></li>
                 <li class="admin-link"><a href="admin.html" class="active">Admin</a></li>
                 <li><a href="about.html">About Us</a></li>
@@ -360,57 +263,40 @@
     </header>
 
     <main class="page-content">
-        <div id="adminLogin" class="admin-login-container">
-            <h2>Admin Login</h2>
-            <form id="adminLoginForm">
-                <div class="form-group">
-                    <label for="adminEmail">Email:</label>
-                    <input type="email" id="adminEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="adminPassword">Password:</label>
-                    <input type="password" id="adminPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-                <p id="loginError" class="admin-login-error" style="display: none;"></p>
-            </form>
-            <p class="form-note">
-                <br>
-                **Default Login:**<br>
-                Email: `admin@example.com`<br>
-                Password: `password123`
-            </p>
-        </div>
+        <h1>Admin Dashboard (Local Incidents)</h1>
+        <p>This page displays incident reports saved **locally in your browser's storage**. It will only show incidents reported from this specific browser and device.</p>
+        <p class="form-note"><em>For a centralized database of all incidents, a server-side solution would be required.</em></p>
 
-        <div id="adminDashboardContent" style="display: none;">
-            <h1 style="display: inline-block;">Admin Dashboard</h1>
-            <button id="logoutButton" class="btn-primary">Logout</button>
-            <p>Overview of reported incidents and community safety data.</p>
-
-            <section id="reported-incidents">
-                <h2>Reported Incidents (Local Storage)</h2>
-                <table class="incidents-table">
+        <section id="incidentReports">
+            <h2>Incident Reports</h2>
+            <div class="admin-controls">
+                <button id="downloadCsvBtn" class="btn btn-secondary">Download as CSV</button>
+                <button id="clearIncidentsBtn" class="btn btn-danger">Clear All Local Incidents</button>
+            </div>
+            
+            <div id="incidentsTableContainer">
+                <table id="incidentsTable">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Type</th>
                             <th>Date</th>
                             <th>Time</th>
                             <th>Location</th>
+                            <th>Lat/Lon</th>
                             <th>Description</th>
-                            <th>Contact</th>
+                            <th>Reporter Name</th>
+                            <th>Reporter Email</th>
+                            <th>Reporter Phone</th>
+                            <th>Timestamp</th>
                         </tr>
                     </thead>
-                    <tbody id="incidentsTableBody">
-                        <!-- Incidents will be loaded here by JavaScript -->
-                    </tbody>
+                    <tbody>
+                        </tbody>
                 </table>
-                <div id="noIncidentsMessage" class="no-incidents-message" style="display: none;">
-                    <p>No incidents have been reported yet in this browser's local storage.</p>
-                    <p>Go to the <a href="report-incident.html">Report Incident</a> page to submit one!</p>
-                </div>
-                <p class="form-note"><em>Note: This data is loaded from your browser's local storage and is not stored persistently on a server.</em></p>
-            </section>
-        </div>
+            </div>
+            <p id="noIncidentsMessage" style="display: none;">No incident reports found in local storage.</p>
+        </section>
     </main>
 
     <footer>
@@ -420,148 +306,101 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const adminLoginForm = document.getElementById('adminLoginForm');
-            const adminEmailInput = document.getElementById('adminEmail');
-            const adminPasswordInput = document.getElementById('adminPassword');
-            const loginErrorDiv = document.getElementById('loginError');
-            const adminLoginContainer = document.getElementById('adminLogin');
-            const adminDashboardContent = document.getElementById('adminDashboardContent');
-            const logoutButton = document.getElementById('logoutButton');
-
-            const incidentsTableBody = document.getElementById('incidentsTableBody');
+            const incidentsTableBody = document.querySelector('#incidentsTable tbody');
             const noIncidentsMessage = document.getElementById('noIncidentsMessage');
+            const clearIncidentsBtn = document.getElementById('clearIncidentsBtn');
+            const downloadCsvBtn = document.getElementById('downloadCsvBtn');
 
-            // --- Default Admin Credentials (for demonstration only, NOT secure) ---
-            const ADMIN_EMAIL = 'admin@example.com';
-            const ADMIN_PASSWORD = 'password123';
-
-            /**
-             * Checks the login status from localStorage and updates UI accordingly.
-             */
-            function checkLoginStatus() {
-                const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
-
-                if (loggedIn) {
-                    adminLoginContainer.style.display = 'none';
-                    adminDashboardContent.style.display = 'block';
-                    loadAndRenderIncidents(); // Load data only when logged in
-                } else {
-                    adminLoginContainer.style.display = 'block';
-                    adminDashboardContent.style.display = 'none';
-                    adminLoginForm.reset(); // Clear form on logout
-                    loginErrorDiv.style.display = 'none'; // Hide errors
-                }
-            }
-
-            /**
-             * Handles the admin login form submission.
-             */
-            adminLoginForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const email = adminEmailInput.value;
-                const password = adminPasswordInput.value;
-
-                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                    localStorage.setItem('adminLoggedIn', 'true');
-                    checkLoginStatus();
-                } else {
-                    loginErrorDiv.textContent = 'Invalid email or password.';
-                    loginErrorDiv.style.display = 'block';
-                }
-            });
-
-            /**
-             * Handles the admin logout.
-             */
-            logoutButton.addEventListener('click', () => {
-                localStorage.removeItem('adminLoggedIn');
-                checkLoginStatus();
-            });
-
-            /**
-             * Fetches incident data from localStorage and renders it into the table.
-             */
-            function loadAndRenderIncidents() {
+            function loadIncidents() {
                 incidentsTableBody.innerHTML = ''; // Clear existing rows
-                noIncidentsMessage.style.display = 'none'; // Hide message by default
-
-                const storedIncidentsJSON = localStorage.getItem('communitySafetyIncidents');
-                let incidents = [];
-
-                if (storedIncidentsJSON) {
-                    try {
-                        incidents = JSON.parse(storedIncidentsJSON);
-                        if (!Array.isArray(incidents)) {
-                            console.error("Data in localStorage is not an array for incidents. Resetting.");
-                            incidents = []; // Reset if not an array
-                        }
-                    } catch (e) {
-                        console.error("Error parsing incidents from localStorage:", e);
-                        incidents = []; // Reset if parsing fails
-                    }
-                }
+                const incidents = JSON.parse(localStorage.getItem('incidents')) || [];
 
                 if (incidents.length === 0) {
-                    noIncidentsMessage.style.display = 'block'; // Show message if no incidents
+                    noIncidentsMessage.style.display = 'block';
+                    document.getElementById('incidentsTableContainer').style.display = 'none';
+                    clearIncidentsBtn.style.display = 'none'; // Hide clear button if no incidents
+                    downloadCsvBtn.style.display = 'none'; // Hide download button if no incidents
                     return;
                 }
 
-                // Sort incidents by timestamp or date (most recent first)
-                incidents.sort((a, b) => {
-                    const dateA = a.timestamp ? new Date(a.timestamp) : new Date(a.date);
-                    const dateB = b.timestamp ? new Date(b.timestamp) : new Date(b.date);
-                    return dateB.getTime() - dateA.getTime(); // Descending order (most recent first)
-                });
+                noIncidentsMessage.style.display = 'none';
+                document.getElementById('incidentsTableContainer').style.display = 'block';
+                clearIncidentsBtn.style.display = 'inline-block'; // Show clear button
+                downloadCsvBtn.style.display = 'inline-block'; // Show download button
 
 
-                incidents.forEach(incident => {
-                    const row = document.createElement('tr');
-                    // Use data-label for responsive table headers on small screens
-                    row.innerHTML = `
-                        <td data-label="Type">${incident.type || 'N/A'}</td>
-                        <td data-label="Date">${incident.date || 'N/A'}</td>
-                        <td data-label="Time">${incident.time || 'N/A'}</td>
-                        <td data-label="Location">${incident.location || 'N/A'}</td>
-                        <td data-label="Description">${incident.description || 'N/A'}</td>
-                        <td data-label="Contact">${incident.contactName || incident.contactEmail || incident.contactPhone || '<span class="optional-info">N/A</span>'}</td>
-                    `;
-                    incidentsTableBody.appendChild(row);
+                incidents.forEach((incident, index) => {
+                    const row = incidentsTableBody.insertRow();
+                    row.insertCell().textContent = index + 1; // Simple ID
+                    row.insertCell().textContent = incident.incidentType || 'N/A';
+                    row.insertCell().textContent = incident.incidentDate || 'N/A';
+                    row.insertCell().textContent = incident.incidentTime || 'N/A';
+                    row.insertCell().textContent = incident.location || 'N/A';
+                    row.insertCell().textContent = (incident.latitude && incident.longitude) ? `${incident.latitude}, ${incident.longitude}` : 'N/A';
+                    row.insertCell().textContent = incident.description || 'N/A';
+                    row.insertCell().textContent = incident.contactName || 'Anonymous';
+                    row.insertCell().textContent = incident.contactEmail || 'N/A';
+                    row.insertCell().textContent = incident.contactPhone || 'N/A';
+                    row.insertCell().textContent = incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A';
                 });
             }
 
-            // Call checkLoginStatus on initial page load
-            checkLoginStatus();
-
-            // Highlight active navigation link
-            const currentPath = window.location.pathname.split('/').pop();
-            const navLinks = document.querySelectorAll('nav ul li a');
-
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
-                    link.classList.add('active');
+            // Clear All Incidents Button
+            clearIncidentsBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear ALL locally stored incident reports? This action cannot be undone.')) {
+                    localStorage.removeItem('incidents');
+                    loadIncidents(); // Reload to show empty state
+                    alert('All local incident reports have been cleared.');
                 }
             });
 
-            // Section animation observer (for general consistency across pages)
-            const sections = document.querySelectorAll('section');
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.2
-            };
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-in');
-                        observer.unobserve(entry.target);
-                    }
+            // Download as CSV Button
+            downloadCsvBtn.addEventListener('click', () => {
+                const incidents = JSON.parse(localStorage.getItem('incidents')) || [];
+                if (incidents.length === 0) {
+                    alert('No incidents to download.');
+                    return;
+                }
+
+                const headers = [
+                    "ID", "Type", "Date", "Time", "Location", "Latitude", "Longitude",
+                    "Description", "Reporter Name", "Reporter Email", "Reporter Phone", "Timestamp"
+                ];
+
+                const csvRows = [];
+                csvRows.push(headers.join(',')); // Add headers as the first row
+
+                incidents.forEach((incident, index) => {
+                    const values = [
+                        index + 1,
+                        `"${(incident.incidentType || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.incidentDate || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.incidentTime || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.location || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.latitude || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.longitude || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.description || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.contactName || 'Anonymous').replace(/"/g, '""')}"`,
+                        `"${(incident.contactEmail || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.contactPhone || 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A').replace(/"/g, '""')}"`
+                    ];
+                    csvRows.push(values.join(','));
                 });
-            }, observerOptions);
-            sections.forEach(section => {
-                observer.observe(section);
+
+                const csvString = csvRows.join('\n');
+                const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'community_safety_incidents_local.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             });
+
+
+            // Initial load of incidents when the page loads
+            loadIncidents();
         });
     </script>
 </body>

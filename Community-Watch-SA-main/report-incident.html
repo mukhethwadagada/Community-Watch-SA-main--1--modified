@@ -548,63 +548,11 @@
             }
         }
     </style>
-    <!-- Firebase CDN -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-
-        // Initialize Firebase variables globally
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null;
-
-        // Initialize Firebase if configuration is available
-        if (Object.keys(firebaseConfig).length > 0) {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-
-            // Handle authentication: prefer custom token, fallback to anonymous
-            if (typeof __initial_auth_token !== 'undefined') {
-                signInWithCustomToken(auth, __initial_auth_token).catch((error) => {
-                    console.error("Error signing in with custom token:", error);
-                    signInAnonymously(auth).catch(anonError => console.error("Anonymous sign-in failed:", anonError));
-                });
-            } else {
-                signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
-            }
-
-            // Listen for changes in authentication state to get the current user ID
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUserId = user.uid;
-                    console.log("Firebase user ID for reporting:", currentUserId);
-                } else {
-                    currentUserId = null;
-                    console.log("No Firebase user is signed in for reporting.");
-                }
-            });
-        } else {
-            console.warn("Firebase config not found. Firebase features (including data storage) will not be available for reporting.");
-        }
-
-        // Expose Firebase instances and currentUserId getter globally for use by other scripts
-        window.firebaseApp = app;
-        window.firebaseDb = db;
-        window.firebaseAuth = auth;
-        window.getCurrentUserId = () => currentUserId;
-    </script>
-    <!-- EmailJS CDN -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
             // Replace with your actual EmailJS Public Key
-            emailjs.init("7f1GegSzuNOm7r4Nw");
+            emailjs.init("7f1GegSzuNOm7r4Nw"); // Your EmailJS Public Key
         })();
     </script>
 </head>
@@ -692,9 +640,8 @@
 
             <button type="submit" class="btn btn-primary">Submit Report</button>
         </form>
-        <p class="form-note"><em>Note: This form now uses EmailJS for sending emails and Firestore for data storage.</em></p>
+        <p class="form-note"><em>Note: This form now uses EmailJS for sending emails and saves data locally in your browser.</em></p>
 
-        <!-- Confirmation Message Section -->
         <div id="confirmationMessage" class="confirmation-message">
             <h3>Incident Report Submitted Successfully!</h3>
             <p>Dear <span id="confName">Community Member</span>,</p>
@@ -768,8 +715,8 @@
                             },
                             {
                                 enableHighAccuracy: true, // Request high accuracy
-                                timeout: 10000,           // 10 seconds timeout
-                                maximumAge: 0             // Don't use cached position
+                                timeout: 10000,          // 10 seconds timeout
+                                maximumAge: 0            // Don't use cached position
                             }
                         );
                     } else {
@@ -796,7 +743,34 @@
                     const latitude = latitudeInput.value; // Get captured latitude
                     const longitude = longitudeInput.value; // Get captured longitude
 
-                    // Prepare data for EmailJS (includes new fields)
+                    // Create an incident object to save locally
+                    const incidentData = {
+                        incidentType,
+                        incidentDate,
+                        incidentTime,
+                        location,
+                        description,
+                        contactName,
+                        contactEmail,
+                        contactPhone,
+                        latitude: latitude || null,
+                        longitude: longitude || null,
+                        timestamp: new Date().toISOString() // Local timestamp
+                    };
+
+                    // --- Local Storage Saving ---
+                    try {
+                        let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
+                        incidents.push(incidentData);
+                        localStorage.setItem('incidents', JSON.stringify(incidents));
+                        console.log("Incident successfully saved to local storage!", incidentData);
+                    } catch (localStorageError) {
+                        console.error("Error saving incident to local storage:", localStorageError);
+                        alert('There was an error saving your report locally. Please try again or check your browser storage settings.');
+                    }
+                    // --- End Local Storage Saving ---
+
+                    // Prepare data for EmailJS
                     const emailJsParams = {
                         incidentType: incidentType,
                         incidentDate: incidentDate,
@@ -810,116 +784,33 @@
                         longitude: longitude   // Add longitude to email template
                     };
 
-                    // Ensure Firebase is initialized and user is authenticated for Firestore saving
-                    const userId = window.getCurrentUserId();
-                    if (!window.firebaseDb || !userId) {
-                        console.error("Firebase not initialized or user not authenticated. Cannot save incident to Firestore.");
-                        // Inform user via a modal/message if Firestore saving is critical
-                    } else {
-                        try {
-                            // Save incident to Firestore (includes new fields)
-                            const incidentsCollectionRef = collection(window.firebaseDb, `artifacts/${window.firebaseApp.options.appId}/users/${userId}/incidents`);
-                            await addDoc(incidentsCollectionRef, {
-                                incidentType,
-                                incidentDate,
-                                incidentTime,
-                                location,
-                                description,
-                                contactName,
-                                contactEmail,
-                                contactPhone,
-                                latitude: latitude || null, // Store as null if not captured
-                                longitude: longitude || null, // Store as null if not captured
-                                timestamp: new Date() // Add a server timestamp
-                            });
-                            console.log("Incident saved to Firestore successfully!");
-                        } catch (error) {
-                            console.error("Error adding document to Firestore: ", error);
-                            // Do not return, attempt EmailJS submission even if Firestore failed
-                        }
-                    }
-
-                    // Attempt to send email via EmailJS
+                    // Send email using EmailJS
                     try {
-                        // Use emailjs.send() to pass the parameters object
-                        await emailjs.send("service_oxovdtj", "template_n2oj8hn", emailJsParams);
-                        console.log("Email sent via EmailJS successfully!");
+                        await emailjs.send("service_liud33i", "template_a69z1m8", emailJsParams);
+                        console.log("Email successfully sent via EmailJS!");
 
-                        // Populate and display confirmation message
+                        // Display confirmation message
                         document.getElementById('confName').textContent = contactName;
                         document.getElementById('confIncidentType').textContent = incidentType;
-                        document.getElementById('confLocation').textContent = location;
+                        document.getElementById('confLocation').textContent = location || 'Not provided';
+                        document.getElementById('confLiveLocation').textContent = (latitude && longitude) ? `${latitude}, ${longitude}` : 'N/A';
                         document.getElementById('confIncidentDate').textContent = incidentDate;
-                        document.getElementById('confIncidentTime').textContent = incidentTime;
-                        document.getElementById('confLiveLocation').textContent = (latitude && longitude) ? `Lat: ${latitude}, Lon: ${longitude}` : 'N/A';
-
-
-                        confirmationMessageDiv.innerHTML = `
-                            <h3>Incident Report Submitted Successfully!</h3>
-                            <p>Dear ${contactName},</p>
-                            <p>Thank you for submitting your incident report to Community Safety SA. We have received your submission with the following details:</p>
-                            <ul>
-                                <li><strong>Incident Type:</strong> ${incidentType}</li>
-                                <li><strong>Location:</strong> ${location || 'Not provided'}</li>
-                                <li><strong>Live Coordinates:</strong> ${(latitude && longitude) ? `Lat: ${latitude}, Lon: ${longitude}` : 'N/A'}</li>
-                                <li><strong>Date of Incident:</strong> ${incidentDate}</li>
-                                <li><strong>Time of Incident:</strong> ${incidentTime || 'Not provided'}</li>
-                            </ul>
-                            <p>We appreciate your contribution to a safer community. A confirmation email has been sent to you if you provided your email address.</p>
-                            <p>Sincerely,</p>
-                            <p>The Community Safety SA Team</p>
-                        `;
-                        confirmationMessageDiv.style.display = 'block';
-                        incidentForm.reset(); // Clear form fields
-                        // Clear location inputs as well after successful submission
-                        latitudeInput.value = '';
+                        document.getElementById('confIncidentTime').textContent = incidentTime || 'N/A';
+                        
+                        confirmationMessageDiv.style.display = 'block'; // Show the confirmation message
+                        incidentForm.reset(); // Clear the form
+                        latitudeInput.value = ''; // Clear latitude and longitude inputs
                         longitudeInput.value = '';
                         locationStatus.textContent = 'Click the button to get your current coordinates.';
-                        locationStatus.className = 'location-info'; // Reset class
-                        confirmationMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        locationStatus.className = 'location-info'; // Reset location status styling
 
-                    } catch (emailError) {
-                        console.error("Failed to send email via EmailJS: ", emailError);
-                        // If EmailJS fails, still show a success message if Firestore worked, or a general error if both failed
-                        confirmationMessageDiv.innerHTML = `<h3>Submission Partially Successful / Error!</h3><p style="color:red;">Your report was submitted (data saved to our records), but there was an issue sending the confirmation email. Error: ${emailError.message}</p>`;
-                        if (!window.firebaseDb || !userId) { // If Firebase also failed
-                           confirmationMessageDiv.innerHTML = `<h3>Error!</h3><p style="color:red;">Failed to submit report. Neither data storage nor email sending was successful. Please check your internet connection or try again later. Error: ${emailError.message}</p>`;
-                        }
-                        confirmationMessageDiv.style.display = 'block';
-                        confirmationMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } catch (emailJsError) {
+                        console.error("Error sending email via EmailJS:", emailJsError);
+                        alert('There was an error submitting your report. Please try again later.'); // Inform user
                     }
                 });
             }
-
-            // General page logic for nav highlighting and section animations
-            const currentPath = window.location.pathname.split('/').pop();
-            const navLinks = document.querySelectorAll('nav ul li a');
-
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                } else if (currentPath === '' && link.getAttribute('href') === 'index.html') {
-                    link.classList.add('active');
-                }
-            });
-
-            const sections = document.querySelectorAll('section');
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.2
-            };
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-in');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            sections.forEach(section => {
-                observer.observe(section);
-            });
         });
     </script>
+</body>
+</html>

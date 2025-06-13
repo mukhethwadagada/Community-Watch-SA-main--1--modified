@@ -343,6 +343,14 @@
                 padding: 20px;
             }
         }
+
+        /* New styles for improved button layout within table cells */
+        #incidentsTable td .action-buttons {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 5px; /* Space between buttons */
+            align-items: flex-start; /* Align buttons to the start of the cell */
+        }
     </style>
 </head>
 <body>
@@ -405,10 +413,12 @@
                                 <th>Reporter Email</th>
                                 <th>Reporter Phone</th>
                                 <th>Timestamp</th>
-                                <th>Status</th> <th>Actions</th> </tr>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
                 <p id="noIncidentsMessage" style="display: none;">No incident reports found in local storage.</p>
@@ -429,7 +439,7 @@
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
             const loginError = document.getElementById('loginError');
-            const logoutBtn = document.getElementById('logoutBtn'); // NEW: Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
 
             const incidentsTableBody = document.querySelector('#incidentsTable tbody');
             const noIncidentsMessage = document.getElementById('noIncidentsMessage');
@@ -438,16 +448,16 @@
 
             // --- Simple Client-Side Authentication ---
             const ADMIN_USERNAME = 'admin';
-            const ADMIN_PASSWORD = 'password123'; // REMEMBER: This is insecure for production!
+            const ADMIN_PASSWORD = 'password123'; 
             const SESSION_KEY = 'adminLoggedIn';
 
             function showDashboard() {
                 loginContainer.style.display = 'none';
                 dashboardContent.style.display = 'block';
-                // Reset main's flex properties once content is displayed
+                
                 document.querySelector('main').style.justifyContent = 'flex-start';
                 document.querySelector('main').style.alignItems = 'flex-start';
-                document.querySelector('main').style.minHeight = 'auto'; // Remove min-height
+                document.querySelector('main').style.minHeight = 'auto';
                 loadIncidents(); // Load incidents only after successful login
             }
 
@@ -456,16 +466,17 @@
                 dashboardContent.style.display = 'none';
                 document.querySelector('main').style.justifyContent = 'center';
                 document.querySelector('main').style.alignItems = 'center';
-                document.querySelector('main').style.minHeight = '500px'; // Set min-height for centering
+                document.querySelector('main').style.minHeight = '500px'; 
             }
 
-            // Check if already logged in from current session
+            // Check session storage on page load
             if (sessionStorage.getItem(SESSION_KEY) === 'true') {
                 showDashboard();
             } else {
                 showLogin();
             }
 
+            // Handle login form submission
             loginForm.addEventListener('submit', (event) => {
                 event.preventDefault(); // Prevent default form submission
 
@@ -473,7 +484,7 @@
                 const enteredPassword = passwordInput.value;
 
                 if (enteredUsername === ADMIN_USERNAME && enteredPassword === ADMIN_PASSWORD) {
-                    sessionStorage.setItem(SESSION_KEY, 'true'); // Mark as logged in for this session
+                    sessionStorage.setItem(SESSION_KEY, 'true'); // Set session variable
                     loginError.style.display = 'none';
                     showDashboard();
                 } else {
@@ -481,35 +492,33 @@
                     loginError.style.display = 'block';
                     usernameInput.value = ''; // Clear inputs
                     passwordInput.value = '';
-                    usernameInput.focus(); // Focus on username for re-entry
+                    usernameInput.focus(); // Focus on username for next attempt
                 }
             });
 
-            // NEW: Logout functionality
+            // Handle logout button click
             logoutBtn.addEventListener('click', () => {
                 if (confirm('Are you sure you want to log out?')) {
-                    sessionStorage.removeItem(SESSION_KEY); // Clear session login flag
-                    showLogin(); // Show the login form again
+                    sessionStorage.removeItem(SESSION_KEY); // Clear session variable
+                    showLogin();
                     alert('You have been logged out.');
                 }
             });
 
-
-            // --- Incident Display and Management ---
+            // Function to load and display incidents from local storage
             function loadIncidents() {
-                incidentsTableBody.innerHTML = ''; // Clear existing rows
+                incidentsTableBody.innerHTML = ''; // Clear existing table rows
                 let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
 
-                // Ensure each incident has a 'status' property, default to 'Pending'
+                // Ensure all incidents have a status
                 incidents = incidents.map(incident => {
                     if (!incident.status) {
                         incident.status = 'Pending';
                     }
                     return incident;
                 });
-                // Save updated incidents back to localStorage if statuses were added
-                localStorage.setItem('incidents', JSON.stringify(incidents));
-
+                
+                localStorage.setItem('incidents', JSON.stringify(incidents)); // Save updated incidents back
 
                 if (incidents.length === 0) {
                     noIncidentsMessage.style.display = 'block';
@@ -527,7 +536,7 @@
 
                 incidents.forEach((incident, index) => {
                     const row = incidentsTableBody.insertRow();
-                    row.insertCell().textContent = index + 1; // Simple ID
+                    row.insertCell().textContent = index + 1; // ID
                     row.insertCell().textContent = incident.incidentType || 'N/A';
                     row.insertCell().textContent = incident.incidentDate || 'N/A';
                     row.insertCell().textContent = incident.incidentTime || 'N/A';
@@ -539,35 +548,37 @@
                     row.insertCell().textContent = incident.contactPhone || 'N/A';
                     row.insertCell().textContent = incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A';
                     
-                    // NEW: Status Cell
+                    // Status Cell
                     const statusCell = row.insertCell();
                     statusCell.textContent = incident.status;
                     statusCell.classList.add(incident.status === 'Resolved' ? 'status-resolved' : 'status-pending');
 
-                    // Actions Cell (contains Delete and Resolve buttons)
+                    // Actions Cell
                     const actionsCell = row.insertCell();
-                    
+                    const actionButtonsDiv = document.createElement('div');
+                    actionButtonsDiv.classList.add('action-buttons');
+
                     // Delete Button
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'Delete';
                     deleteButton.classList.add('btn', 'btn-danger', 'btn-small');
                     deleteButton.dataset.index = index; // Store the index of the incident
                     deleteButton.addEventListener('click', handleDeleteIncident);
-                    actionsCell.appendChild(deleteButton);
+                    actionButtonsDiv.appendChild(deleteButton);
 
                     // Mark as Resolved/Pending Button
                     const toggleStatusButton = document.createElement('button');
                     toggleStatusButton.textContent = incident.status === 'Resolved' ? 'Mark Pending' : 'Mark Resolved';
                     toggleStatusButton.classList.add('btn', incident.status === 'Resolved' ? 'btn-secondary' : 'btn-success', 'btn-small');
-                    toggleStatusButton.style.marginLeft = '5px'; // Add some spacing
                     toggleStatusButton.dataset.index = index; // Store the index
                     toggleStatusButton.addEventListener('click', handleMarkStatus);
-                    actionsCell.appendChild(toggleStatusButton);
+                    actionButtonsDiv.appendChild(toggleStatusButton);
 
+                    actionsCell.appendChild(actionButtonsDiv);
                 });
             }
 
-            // NEW: Function to handle toggling incident status
+            // Function to handle toggling incident status
             function handleMarkStatus(event) {
                 const indexToUpdate = parseInt(event.target.dataset.index);
                 let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
@@ -588,8 +599,7 @@
                 }
             }
 
-
-            // Function to handle deleting a specific incident (updated to remove 'else' from old code)
+            // Function to handle deleting a specific incident
             function handleDeleteIncident(event) {
                 const indexToDelete = parseInt(event.target.dataset.index); // Get the index from the button's data attribute
 
@@ -603,7 +613,6 @@
                         loadIncidents(); // Reload the table to reflect changes
                         alert(`Incident ID ${indexToDelete + 1} has been deleted.`);
                     } else {
-                        // This case should ideally not happen if data-index is correct
                         alert('Error: Incident not found.'); 
                     }
                 }

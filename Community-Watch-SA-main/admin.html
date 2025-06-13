@@ -122,6 +122,13 @@
             font-size: 0.9em;
         }
 
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
         main {
             max-width: 1200px;
             margin: 20px auto;
@@ -129,10 +136,16 @@
             background-color: var(--white-bg);
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-height: 500px; /* Ensure main has some height for login form */
+            display: flex; /* Use flexbox for centering login form */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         section {
             margin-bottom: 40px;
+            width: 100%; /* Ensure sections take full width within main */
         }
 
         section h2 {
@@ -177,6 +190,15 @@
         #incidentsTable tr:hover {
             background-color: #e6f7ff; /* Hover effect */
         }
+        
+        .status-pending {
+            color: #dc3545; /* Red */
+            font-weight: bold;
+        }
+        .status-resolved {
+            color: #28a745; /* Green */
+            font-weight: bold;
+        }
 
         #noIncidentsMessage {
             text-align: center;
@@ -208,6 +230,79 @@
         footer p {
             margin: 5px 0;
             font-size: 0.9em;
+        }
+
+        /* Login Form Styles */
+        #loginContainer {
+            background-color: var(--white-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #loginContainer h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        #loginForm .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        #loginForm label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        #loginForm input[type="text"],
+        #loginForm input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #loginForm input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            outline: none;
+        }
+
+        #loginForm button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            margin-top: 10px;
+            background-color: var(--primary-color);
+        }
+
+        #loginForm button:hover {
+            background-color: #218838;
+        }
+
+        #loginError {
+            color: var(--accent-color);
+            margin-top: 15px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        /* Hide dashboard content initially */
+        #dashboardContent {
+            display: none;
+            width: 100%; /* Ensure dashboard takes full width when shown */
         }
 
         /* Responsive Design */
@@ -244,6 +339,9 @@
             .admin-controls .btn {
                 width: 100%; /* Full width buttons */
             }
+            #loginContainer {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -263,40 +361,59 @@
     </header>
 
     <main class="page-content">
-        <h1>Admin Dashboard (Local Incidents)</h1>
-        <p>This page displays incident reports saved **locally in your browser's storage**. It will only show incidents reported from this specific browser and device.</p>
-        <p class="form-note"><em>For a centralized database of all incidents, a server-side solution would be required.</em></p>
+        <div id="loginContainer">
+            <h2>Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <p id="loginError" style="display: none;">Invalid username or password.</p>
+            </form>
+        </div>
 
-        <section id="incidentReports">
-            <h2>Incident Reports</h2>
-            <div class="admin-controls">
-                <button id="downloadCsvBtn" class="btn btn-secondary">Download as CSV</button>
-                <button id="clearIncidentsBtn" class="btn btn-danger">Clear All Local Incidents</button>
-            </div>
-            
-            <div id="incidentsTableContainer">
-                <table id="incidentsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Type</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Location</th>
-                            <th>Lat/Lon</th>
-                            <th>Description</th>
-                            <th>Reporter Name</th>
-                            <th>Reporter Email</th>
-                            <th>Reporter Phone</th>
-                            <th>Timestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
-            </div>
-            <p id="noIncidentsMessage" style="display: none;">No incident reports found in local storage.</p>
-        </section>
+        <div id="dashboardContent">
+            <h1>Admin Dashboard (Local Incidents)</h1>
+            <p>This page displays incident reports saved **locally in your browser's storage**. It will only show incidents reported from this specific browser and device.</p>
+            <p class="form-note"><em>For a centralized database of all incidents, a server-side solution would be required.</em></p>
+
+            <section id="incidentReports">
+                <h2>Incident Reports</h2>
+                <div class="admin-controls">
+                    <button id="downloadCsvBtn" class="btn btn-secondary">Download as CSV</button>
+                    <button id="clearIncidentsBtn" class="btn btn-danger">Clear All Local Incidents</button>
+                    <button id="logoutBtn" class="btn btn-secondary">Log Out</button>
+                </div>
+                
+                <div id="incidentsTableContainer">
+                    <table id="incidentsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Location</th>
+                                <th>Lat/Lon</th>
+                                <th>Description</th>
+                                <th>Reporter Name</th>
+                                <th>Reporter Email</th>
+                                <th>Reporter Phone</th>
+                                <th>Timestamp</th>
+                                <th>Status</th> <th>Actions</th> </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+                <p id="noIncidentsMessage" style="display: none;">No incident reports found in local storage.</p>
+            </section>
+        </div>
     </main>
 
     <footer>
@@ -306,14 +423,93 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const loginContainer = document.getElementById('loginContainer');
+            const dashboardContent = document.getElementById('dashboardContent');
+            const loginForm = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const loginError = document.getElementById('loginError');
+            const logoutBtn = document.getElementById('logoutBtn'); // NEW: Logout button
+
             const incidentsTableBody = document.querySelector('#incidentsTable tbody');
             const noIncidentsMessage = document.getElementById('noIncidentsMessage');
             const clearIncidentsBtn = document.getElementById('clearIncidentsBtn');
             const downloadCsvBtn = document.getElementById('downloadCsvBtn');
 
+            // --- Simple Client-Side Authentication ---
+            const ADMIN_USERNAME = 'admin';
+            const ADMIN_PASSWORD = 'password123'; // REMEMBER: This is insecure for production!
+            const SESSION_KEY = 'adminLoggedIn';
+
+            function showDashboard() {
+                loginContainer.style.display = 'none';
+                dashboardContent.style.display = 'block';
+                // Reset main's flex properties once content is displayed
+                document.querySelector('main').style.justifyContent = 'flex-start';
+                document.querySelector('main').style.alignItems = 'flex-start';
+                document.querySelector('main').style.minHeight = 'auto'; // Remove min-height
+                loadIncidents(); // Load incidents only after successful login
+            }
+
+            function showLogin() {
+                loginContainer.style.display = 'block';
+                dashboardContent.style.display = 'none';
+                document.querySelector('main').style.justifyContent = 'center';
+                document.querySelector('main').style.alignItems = 'center';
+                document.querySelector('main').style.minHeight = '500px'; // Set min-height for centering
+            }
+
+            // Check if already logged in from current session
+            if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                const enteredUsername = usernameInput.value;
+                const enteredPassword = passwordInput.value;
+
+                if (enteredUsername === ADMIN_USERNAME && enteredPassword === ADMIN_PASSWORD) {
+                    sessionStorage.setItem(SESSION_KEY, 'true'); // Mark as logged in for this session
+                    loginError.style.display = 'none';
+                    showDashboard();
+                } else {
+                    loginError.textContent = 'Invalid username or password.';
+                    loginError.style.display = 'block';
+                    usernameInput.value = ''; // Clear inputs
+                    passwordInput.value = '';
+                    usernameInput.focus(); // Focus on username for re-entry
+                }
+            });
+
+            // NEW: Logout functionality
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to log out?')) {
+                    sessionStorage.removeItem(SESSION_KEY); // Clear session login flag
+                    showLogin(); // Show the login form again
+                    alert('You have been logged out.');
+                }
+            });
+
+
+            // --- Incident Display and Management ---
             function loadIncidents() {
                 incidentsTableBody.innerHTML = ''; // Clear existing rows
-                const incidents = JSON.parse(localStorage.getItem('incidents')) || [];
+                let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
+
+                // Ensure each incident has a 'status' property, default to 'Pending'
+                incidents = incidents.map(incident => {
+                    if (!incident.status) {
+                        incident.status = 'Pending';
+                    }
+                    return incident;
+                });
+                // Save updated incidents back to localStorage if statuses were added
+                localStorage.setItem('incidents', JSON.stringify(incidents));
+
 
                 if (incidents.length === 0) {
                     noIncidentsMessage.style.display = 'block';
@@ -342,7 +538,75 @@
                     row.insertCell().textContent = incident.contactEmail || 'N/A';
                     row.insertCell().textContent = incident.contactPhone || 'N/A';
                     row.insertCell().textContent = incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A';
+                    
+                    // NEW: Status Cell
+                    const statusCell = row.insertCell();
+                    statusCell.textContent = incident.status;
+                    statusCell.classList.add(incident.status === 'Resolved' ? 'status-resolved' : 'status-pending');
+
+                    // Actions Cell (contains Delete and Resolve buttons)
+                    const actionsCell = row.insertCell();
+                    
+                    // Delete Button
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.classList.add('btn', 'btn-danger', 'btn-small');
+                    deleteButton.dataset.index = index; // Store the index of the incident
+                    deleteButton.addEventListener('click', handleDeleteIncident);
+                    actionsCell.appendChild(deleteButton);
+
+                    // Mark as Resolved/Pending Button
+                    const toggleStatusButton = document.createElement('button');
+                    toggleStatusButton.textContent = incident.status === 'Resolved' ? 'Mark Pending' : 'Mark Resolved';
+                    toggleStatusButton.classList.add('btn', incident.status === 'Resolved' ? 'btn-secondary' : 'btn-success', 'btn-small');
+                    toggleStatusButton.style.marginLeft = '5px'; // Add some spacing
+                    toggleStatusButton.dataset.index = index; // Store the index
+                    toggleStatusButton.addEventListener('click', handleMarkStatus);
+                    actionsCell.appendChild(toggleStatusButton);
+
                 });
+            }
+
+            // NEW: Function to handle toggling incident status
+            function handleMarkStatus(event) {
+                const indexToUpdate = parseInt(event.target.dataset.index);
+                let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
+
+                if (indexToUpdate >= 0 && indexToUpdate < incidents.length) {
+                    const currentStatus = incidents[indexToUpdate].status;
+                    if (currentStatus === 'Resolved') {
+                        incidents[indexToUpdate].status = 'Pending';
+                        alert(`Incident ID ${indexToUpdate + 1} marked as Pending.`);
+                    } else {
+                        incidents[indexToUpdate].status = 'Resolved';
+                        alert(`Incident ID ${indexToUpdate + 1} marked as Resolved.`);
+                    }
+                    localStorage.setItem('incidents', JSON.stringify(incidents));
+                    loadIncidents(); // Reload table to reflect status change
+                } else {
+                    alert('Error: Incident not found for status update.');
+                }
+            }
+
+
+            // Function to handle deleting a specific incident (updated to remove 'else' from old code)
+            function handleDeleteIncident(event) {
+                const indexToDelete = parseInt(event.target.dataset.index); // Get the index from the button's data attribute
+
+                if (confirm(`Are you sure you want to delete incident ID ${indexToDelete + 1}? This action cannot be undone.`)) {
+                    let incidents = JSON.parse(localStorage.getItem('incidents')) || [];
+                    
+                    // Remove the incident at the specified index
+                    if (indexToDelete >= 0 && indexToDelete < incidents.length) {
+                        incidents.splice(indexToDelete, 1); // Remove 1 element at indexToDelete
+                        localStorage.setItem('incidents', JSON.stringify(incidents)); // Save updated array
+                        loadIncidents(); // Reload the table to reflect changes
+                        alert(`Incident ID ${indexToDelete + 1} has been deleted.`);
+                    } else {
+                        // This case should ideally not happen if data-index is correct
+                        alert('Error: Incident not found.'); 
+                    }
+                }
             }
 
             // Clear All Incidents Button
@@ -364,7 +628,7 @@
 
                 const headers = [
                     "ID", "Type", "Date", "Time", "Location", "Latitude", "Longitude",
-                    "Description", "Reporter Name", "Reporter Email", "Reporter Phone", "Timestamp"
+                    "Description", "Reporter Name", "Reporter Email", "Reporter Phone", "Timestamp", "Status"
                 ];
 
                 const csvRows = [];
@@ -383,7 +647,8 @@
                         `"${(incident.contactName || 'Anonymous').replace(/"/g, '""')}"`,
                         `"${(incident.contactEmail || 'N/A').replace(/"/g, '""')}"`,
                         `"${(incident.contactPhone || 'N/A').replace(/"/g, '""')}"`,
-                        `"${(incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A').replace(/"/g, '""')}"`
+                        `"${(incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'N/A').replace(/"/g, '""')}"`,
+                        `"${(incident.status || 'N/A').replace(/"/g, '""')}"`
                     ];
                     csvRows.push(values.join(','));
                 });
@@ -397,10 +662,6 @@
                 link.click();
                 document.body.removeChild(link);
             });
-
-
-            // Initial load of incidents when the page loads
-            loadIncidents();
         });
     </script>
 </body>
